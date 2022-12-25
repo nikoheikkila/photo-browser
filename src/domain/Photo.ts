@@ -20,6 +20,6 @@ export const schema = z.object({
 
 export type Photo = z.infer<typeof schema>;
 
-export function create(args: Record<string, unknown> = {}): Photo {
+export function createPhoto(args: Record<string, unknown>): Photo {
 	return schema.parse(args);
 }
