@@ -4,29 +4,32 @@ import { createPhoto } from '../domain/Photo';
 
 export default class PhotoBrowser {
 	private readonly gateway: PhotoGateway;
-	private readonly defaultLimit = 100;
+	private limit = 100;
 
 	constructor(gateway: PhotoGateway) {
 		this.gateway = gateway;
 	}
 
-	public async loadPhotos(limit?: number): Promise<Photo[]> {
-		const response = await this.gateway.fetchPhotos({
-			limit: limit ?? this.defaultLimit
-		});
+	public withLimit(limit: number): this {
+		if (limit < 1) throw new Error('Photo limit must be greater than zero');
 
-		return this.responseToArray(response).map(createPhoto);
+		this.limit = limit;
+		return this;
 	}
 
-	private responseToArray(response: string) {
-		if (response.length === 0) {
-			throw new Error('Received empty JSON response');
-		}
+	public async loadPhotos(): Promise<Photo[]> {
+		const response = await this.fetchPhotos();
 
+		return response.map(createPhoto);
+	}
+
+	private async fetchPhotos() {
 		try {
-			return Array.from<Record<string, unknown>>(JSON.parse(response));
+			return await this.gateway.fetchPhotos({
+				limit: this.limit
+			});
 		} catch (error: unknown) {
-			throw new Error('Received malformed JSON response');
+			throw new Error(`Received error from server: '${error}'`);
 		}
 	}
 }

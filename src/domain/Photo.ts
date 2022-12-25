@@ -21,5 +21,15 @@ export const schema = z.object({
 export type Photo = z.infer<typeof schema>;
 
 export function createPhoto(args: Record<string, unknown>): Photo {
-	return schema.parse(args);
+	try {
+		return schema.parse(args);
+	} catch (error: unknown) {
+		console.error(error);
+
+		if (error instanceof z.ZodError) {
+			throw new Error('Received malformed JSON response');
+		}
+
+		throw error;
+	}
 }
