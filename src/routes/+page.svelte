@@ -1,2 +1,12 @@
 <h1>Photo Browser</h1>
-<p>Visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to read the documentation</p>
+
+<section class="photo-list">
+    <p>This is an example collection of photos from our backend.</p>
+
+    <section class="grid">
+        <a href="/">
+            <img src="" alt="Caption: Lorem ipsum dolor sit amet">
+        </a>
+    </section>
+
+</section>
