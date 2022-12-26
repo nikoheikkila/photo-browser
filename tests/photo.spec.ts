@@ -8,4 +8,13 @@ test.describe('Single photo page', () => {
 
 		await expect(photo).toBeVisible();
 	});
+
+	test('allows user to return to home page', async ({ page }) => {
+		await page.goto('/photo/1');
+		const homeLink = page.getByRole('link', { name: 'Home' });
+
+		await homeLink.click();
+
+		await expect(page).toHaveURL('/');
+	});
 });
