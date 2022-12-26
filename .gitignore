@@ -1,4 +1,7 @@
+# macOS
 .DS_Store
+
+# SvelteKit
 node_modules
 /build
 /.svelte-kit
@@ -9,10 +12,14 @@ node_modules
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
+# Yarn
 .yarn/*
 !.yarn/releases
 !.yarn/plugins
 !.yarn/sdks
 !.yarn/versions
 .pnp.*
+
+# Task
+.task/
 
