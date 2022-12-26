@@ -63,6 +63,7 @@ tasks:
     deps:
       - task: build
     cmds:
+      - npx playwright install
       - npx playwright test
 
   test:
