@@ -12,7 +12,7 @@ tasks:
       - yarn.lock
       - .yarnrc.yml
     cmds:
-      - yarn install --immutable --immutable-cache --check-cache
+      - yarn install --immutable
 
   format:
     desc: Format the codebase
