@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from 'vitest';
+import { beforeEach, describe, expect, test, vitest } from 'vitest';
 import type { FetchPhotosArgs, JSONResponse, PhotoGateway } from '../../adapters/Gateway';
 import PhotoBrowser from '../PhotoBrowser';
 import { faker } from '@faker-js/faker';
@@ -30,13 +30,24 @@ export class FakeGateway implements PhotoGateway {
 			};
 		});
 	}
+
+	public async fetchPhoto(id: number): Promise<JSONResponse> {
+		return {
+			id,
+			albumId: faker.datatype.number({ min: 1, max: 100 }),
+			title: faker.lorem.sentence(5),
+			url: faker.image.cats(1920, 1080, true),
+			thumbnailUrl: faker.image.abstract(100, 100, true)
+		};
+	}
 }
 
-describe('PhotoBrowser (Unit)', () => {
+describe('PhotoBrowser', () => {
 	let gateway: FakeGateway;
 	let browser: PhotoBrowser;
 
 	beforeEach(() => {
+		console.error = vitest.fn();
 		gateway = new FakeGateway();
 		browser = new PhotoBrowser(gateway);
 	});
@@ -96,6 +107,23 @@ describe('PhotoBrowser (Unit)', () => {
 			expect(() => browser.loadPhotos()).rejects.toThrowError(
 				"Received error from server: 'Error: Could not load photos'"
 			);
+		});
+	});
+	describe('loading a single photo', () => {
+		test('returns a single entity', async () => {
+			const id = faker.datatype.number({ min: 1 });
+
+			const photo = await browser.loadPhoto(id);
+
+			expect(photo.id).toBe(id);
+			expect(photo.albumId).toBeGreaterThan(0);
+			expect(photo.title).not.toBe('');
+			expect(photo.url).toBeInstanceOf(URL);
+			expect(photo.thumbnailUrl).toBeInstanceOf(URL);
+		});
+
+		test('throws error with ID less than 1', async () => {
+			expect(() => browser.loadPhoto(0)).rejects.toThrowError('Photo ID must be greater than zero');
 		});
 	});
 });

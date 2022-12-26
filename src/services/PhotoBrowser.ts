@@ -23,6 +23,16 @@ export default class PhotoBrowser {
 		return response.map(createPhoto);
 	}
 
+	public async loadPhoto(id: number): Promise<Photo> {
+		if (id < 1) {
+			throw new Error('Photo ID must be greater than zero');
+		}
+
+		const response = await this.gateway.fetchPhoto(id);
+
+		return createPhoto(response);
+	}
+
 	private async fetchPhotos() {
 		try {
 			return await this.gateway.fetchPhotos({
