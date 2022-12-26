@@ -21,4 +21,12 @@ test.describe('Photo listing', () => {
 
 		await expect(numberOfAccessiblePhotos).toBe(numberOfAllPhotos);
 	});
+
+	test('photos in page link to a single photo page', async ({ page }) => {
+		const firstPhoto = page.getByRole('link', { name: /^Caption: (.+)$/ }).first();
+
+		await firstPhoto.click();
+
+		await expect(page).toHaveURL(/\/photo\/\d+$/);
+	});
 });

@@ -8,7 +8,7 @@
 <section class="grid photo-list">
 
   {#each photos as photo (photo.id)}
-    <a href={photo.url} target="_blank" rel="noopener noreferrer">
+    <a href="/photo/{photo.id}" data-sveltekit-preload-data="tap">
       <img src={photo.thumbnailUrl} alt="Caption: {photo.title}">
     </a>
   {/each}
