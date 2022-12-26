@@ -5,7 +5,7 @@ const config: PlaywrightTestConfig = {
 	fullyParallel: true,
 	workers: '80%',
 	webServer: {
-		command: 'yarn build && yarn preview',
+		command: 'npx vite preview',
 		port: 4173
 	}
 };

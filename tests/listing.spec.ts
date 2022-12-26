@@ -15,11 +15,9 @@ test.describe('Photo listing', () => {
 	test('page lists all the photos with accessible screen reader texts', async ({ page }) => {
 		const photos = page.locator('img');
 		const accessiblePhotos = page.getByAltText(/^Caption: (.+)$/);
-
 		const numberOfAllPhotos = await photos.count();
-		const numberOfAccessiblePhotos = await accessiblePhotos.count();
 
-		await expect(numberOfAccessiblePhotos).toBe(numberOfAllPhotos);
+		await expect(accessiblePhotos).toHaveCount(numberOfAllPhotos);
 	});
 
 	test('photos in page link to a single photo page', async ({ page }) => {
