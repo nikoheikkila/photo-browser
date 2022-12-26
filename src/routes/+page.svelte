@@ -1,6 +1,9 @@
 <script>
     import { photoStore } from "../stores/photos";
     import { onMount } from "svelte";
+    import Loading from "../components/Loading.svelte";
+    import Error from "../components/Error.svelte";
+    import PhotoGrid from "../components/PhotoGrid.svelte";
 
     let limit = 50;
 
@@ -9,31 +12,17 @@
     onMount(loadPhotos);
     $: photos = $photoStore.data;
     $: isLoading = $photoStore.loading || photos.length === 0;
-    $: error = $photoStore.error ? $photoStore.error.message : '';
+    $: error = $photoStore.error;
 </script>
 
-<h1>Photo Browser</h1>
-
 {#if isLoading}
-  <p>Loading your photos. Please wait...</p>
+  <Loading message="Loading your photos. Please wait..." />
 {/if}
 
 {#if error}
-  <p>There was an error loading the photos</p>
-  <small>{error}</small>
+  <Error bind:data={error} />
 {/if}
 
 {#if !isLoading}
-  <main class="photo-list">
-    <p>This is an example collection of photos from our backend.</p>
-    <section class="grid">
-
-      {#each photos as photo (photo.id)}
-        <a href={photo.url} target="_blank" rel="noopener noreferrer">
-          <img src={photo.thumbnailUrl} alt="Caption: {photo.title}">
-        </a>
-      {/each}
-
-    </section>
-  </main>
+  <PhotoGrid bind:photos />
 {/if}

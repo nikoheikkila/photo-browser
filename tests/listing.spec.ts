@@ -17,9 +17,8 @@ test.describe('Photo listing', () => {
 		const accessiblePhotos = page.getByAltText(/^Caption: (.+)$/);
 
 		const numberOfAllPhotos = await photos.count();
-		expect(numberOfAllPhotos).toBeGreaterThan(0);
-
 		const numberOfAccessiblePhotos = await accessiblePhotos.count();
+
 		await expect(numberOfAccessiblePhotos).toBe(numberOfAllPhotos);
 	});
 });
