@@ -2,31 +2,20 @@ version: 3
 
 vars:
   SOURCE_FILES: 'src/**/*.{ts,html,svelte}'
-  TEST_FILES: 'src/**/*.test.ts'
 
 tasks:
   install:
     desc: Install project dependencies
-    sources:
-      - package.json
-      - yarn.lock
-      - .yarnrc.yml
     cmds:
       - yarn install --immutable
 
   format:
     desc: Format the codebase
-    sources:
-      - '{{.SOURCE_FILES}}'
-      - '{{.TEST_FILES}}'
     cmds:
       - npx prettier --plugin-search-dir . --write .
 
   lint:
     desc: Lint the codebase
-    sources:
-      - '{{.SOURCE_FILES}}'
-      - '{{.TEST_FILES}}'
     cmds:
       - npx prettier --plugin-search-dir . --check .
       - npx eslint .
@@ -44,8 +33,6 @@ tasks:
     desc: Build the application
     deps:
       - task: lint
-    sources:
-      - '{{.SOURCE_FILES}}'
     cmds:
       - npx vite build
     env:
@@ -53,9 +40,6 @@ tasks:
 
   test:unit:
     desc: Run unit tests
-    sources:
-      - '{{.SOURCE_FILES}}'
-      - '{{.TEST_FILES}}'
     cmds:
       - npx vitest run
     env:
@@ -70,10 +54,6 @@ tasks:
 
   test:e2e:
     desc: Run end-to-end tests
-    sources:
-      - '{{.SOURCE_FILES}}'
-      - playwright.config.ts
-      - tests/**/*.spec.ts
     deps:
       - task: build
     cmds:
