@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test, vitest } from 'vitest';
-import type { FetchPhotosArgs, JSONResponse, PhotoGateway } from '../adapters/Gateway';
+import type { FetchPhotosArgs, JSONResponse, PhotoGateway } from '../adapters/outbound/Gateway';
 import PhotoBrowser from './PhotoBrowser';
 import { faker } from '@faker-js/faker';
 

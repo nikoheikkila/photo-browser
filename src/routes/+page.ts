@@ -1,6 +1,6 @@
 import type { PageLoad } from './$types';
 import PhotoBrowser from '../services/PhotoBrowser';
-import { APIGateway } from '../adapters/Gateway';
+import { APIGateway } from '../adapters/outbound/Gateway';
 import { error } from '@sveltejs/kit';
 
 export const load = (async () => {
