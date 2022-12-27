@@ -13,25 +13,46 @@ export interface PhotoGateway<T> {
 }
 
 export class APIGateway implements PhotoGateway<Dictionary> {
-	public async fetchPhotos(args: FetchParams): Promise<Dictionary[]> {
-		const { limit } = args;
+	private readonly baseURL = 'https://jsonplaceholder.typicode.com';
 
-		const response = await fetch(`https://jsonplaceholder.typicode.com/photos?_limit=${limit}`);
-		return await response.json();
+	public async fetchPhotos(args: FetchParams): Promise<Dictionary[]> {
+		return this.get('/photos', args);
 	}
 
 	public async fetchPhoto(id: number): Promise<Dictionary> {
-		const response = await fetch(`https://jsonplaceholder.typicode.com/photos/${id}`);
-		return await response.json();
+		return this.get(`/photos/${id}`);
 	}
 
 	public async fetchPhotosByAlbumId(albumId: number, params: FetchParams): Promise<Dictionary[]> {
-		const { limit } = params;
+		return this.get(`/albums/${albumId}/photos`, params);
+	}
 
-		const response = await fetch(
-			`https://jsonplaceholder.typicode.com/albums/${albumId}/photos?_limit=${limit}`
-		);
-		return await response.json();
+	private async get(route: string, query?: FetchParams) {
+		return fetch(this.buildURL(route, query)).then(this.toJSON).catch(this.handleError);
+	}
+
+	private toJSON(response: Response) {
+		if (!response.ok) {
+			throw new Error(`Request failed with status code ${response.status}`);
+		}
+
+		return response.json();
+	}
+
+	private handleError(error: Error): never {
+		console.error(error);
+		throw error;
+	}
+
+	private buildURL(route: string, query: FetchParams | undefined) {
+		const url = new URL(this.baseURL);
+		url.pathname = route;
+
+		for (const [key, value] of Object.entries(query || {})) {
+			url.searchParams.append(key, value.toString());
+		}
+
+		return url;
 	}
 }
 
