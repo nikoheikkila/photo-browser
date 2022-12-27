@@ -63,13 +63,13 @@ describe('PhotoBrowser', () => {
 		});
 
 		test('throws error on server error', async () => {
-			gateway.setError(new Error('Could not load photos'));
+			const expectedError = 'Could not load photos';
+			gateway.setError(new Error(expectedError));
 
-			expect(() => browser.loadPhotos()).rejects.toThrowError(
-				"Received error from server: 'Error: Could not load photos'"
-			);
+			expect(() => browser.loadPhotos()).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
+
 	describe('loading a single photo', () => {
 		test('returns a single entity', async () => {
 			const id = faker.datatype.number({ min: 1 });
@@ -85,6 +85,68 @@ describe('PhotoBrowser', () => {
 
 		test('throws error with ID less than 1', async () => {
 			expect(() => browser.loadPhoto(0)).rejects.toThrowError('Photo ID must be greater than zero');
+		});
+
+		test('throws error on null server response', async () => {
+			gateway.feedWith([{}]);
+
+			expect(() => browser.loadPhoto(1)).rejects.toThrowError('Received malformed JSON response');
+		});
+
+		test('throws error on malformed server response', async () => {
+			gateway.feedWith([{ key: faker.datatype.string() }]);
+
+			expect(() => browser.loadPhoto(1)).rejects.toThrowError('Received malformed JSON response');
+		});
+
+		test('throws error on server error', async () => {
+			const expectedError = 'Could not load photo with ID 1';
+			gateway.setError(new Error(expectedError));
+
+			expect(() => browser.loadPhoto(1)).rejects.toThrowError(new RegExp(expectedError));
+		});
+	});
+
+	describe('loading photos by album', () => {
+		test('returns a collection of photos in the same album', async () => {
+			const albumId = faker.datatype.number({ min: 1 });
+
+			const photos = await browser.loadFromAlbum(albumId);
+			const albumPhotos = photos.filter((photo) => photo.albumId === albumId);
+
+			expect(albumPhotos).toHaveLength(photos.length);
+		});
+
+		test('returns a limited collection of photos in the same album', async () => {
+			const albumId = faker.datatype.number({ min: 1 });
+			const limit = 5;
+
+			const photos = await browser.withLimit(limit).loadFromAlbum(albumId);
+
+			expect(photos).toHaveLength(limit);
+		});
+
+		test('throws error on null server response', async () => {
+			gateway.feedWith([{}]);
+
+			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
+				'Received malformed JSON response'
+			);
+		});
+
+		test('throws error on malformed server response', async () => {
+			gateway.feedWith([{ key: faker.datatype.string() }]);
+
+			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
+				'Received malformed JSON response'
+			);
+		});
+
+		test('throws error on server error', async () => {
+			const expectedError = 'Could not load album with ID 1';
+			gateway.setError(new Error(expectedError));
+
+			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
 });

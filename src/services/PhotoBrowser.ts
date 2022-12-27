@@ -1,12 +1,12 @@
-import type { PhotoGateway } from '../adapters/outbound/Gateway';
+import type { Dictionary, PhotoGateway } from '../adapters/outbound/Gateway';
 import type { Photo } from '../domain/Photo';
 import { createPhoto } from '../domain/Photo';
 
 export default class PhotoBrowser {
-	private readonly gateway: PhotoGateway;
+	private readonly gateway: PhotoGateway<Dictionary>;
 	private limit = 100;
 
-	constructor(gateway: PhotoGateway) {
+	constructor(gateway: PhotoGateway<Dictionary>) {
 		this.gateway = gateway;
 	}
 
@@ -31,6 +31,12 @@ export default class PhotoBrowser {
 		const response = await this.gateway.fetchPhoto(id);
 
 		return createPhoto(response);
+	}
+
+	public async loadFromAlbum(albumId: number): Promise<Photo[]> {
+		const response = await this.gateway.fetchPhotosByAlbumId(albumId, { limit: this.limit });
+
+		return response.map(createPhoto);
 	}
 
 	private async fetchPhotos() {
