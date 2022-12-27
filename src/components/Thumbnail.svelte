@@ -5,5 +5,10 @@
 </script>
 
 <a href="/photo/{photo.id}" data-sveltekit-preload-data="tap">
-	<img src={photo.thumbnailUrl.href} alt="Caption: {photo.title}" loading="lazy" />
+	<img
+		id="photo-{photo.id}"
+		src={photo.thumbnailUrl.href}
+		alt="Caption: {photo.title}"
+		loading="lazy"
+	/>
 </a>
