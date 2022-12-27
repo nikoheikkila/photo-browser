@@ -1,21 +1,20 @@
 <script>
-	import Author from './Author.svelte';
-
-	let links = [{ label: 'Home', href: '/' }];
+	let links = [{ label: 'Photo Browser', href: '/' }];
 </script>
 
-<header>
+<header class="drac-bg-black-secondary">
 	<nav>
 		{#each links as link (link.href)}
-			<a href={link.href}>{link.label}</a>
+			<a class="drac-text drac-text-bold" href={link.href}>{link.label}</a>
 		{/each}
 	</nav>
-	<Author />
 </header>
 
 <style>
 	header {
 		position: fixed;
-		width: 100vw;
+		top: 0;
+		width: 100%;
+		padding: 20px;
 	}
 </style>

@@ -12,7 +12,7 @@ test.describe('Single photo page', () => {
 
 	test('allows user to return to home page', async ({ page }) => {
 		await page.goto('/photo/1');
-		const homeLink = page.getByRole('link', { name: 'Home' });
+		const homeLink = page.getByRole('navigation').getByRole('link');
 
 		await homeLink.click();
 
