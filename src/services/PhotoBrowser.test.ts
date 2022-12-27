@@ -126,6 +126,12 @@ describe('PhotoBrowser', () => {
 			expect(photos).toHaveLength(limit);
 		});
 
+		test('throws error with ID less than 1', async () => {
+			expect(() => browser.loadFromAlbum(0)).rejects.toThrowError(
+				'Album ID must be greater than zero'
+			);
+		});
+
 		test('throws error on null server response', async () => {
 			gateway.feedWith([{}]);
 

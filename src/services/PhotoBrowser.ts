@@ -18,7 +18,7 @@ export default class PhotoBrowser {
 	}
 
 	public async loadPhotos(): Promise<Photo[]> {
-		const response = await this.fetchPhotos();
+		const response = await this.gateway.fetchPhotos({ limit: this.limit });
 
 		return response.map(createPhoto);
 	}
@@ -34,18 +34,12 @@ export default class PhotoBrowser {
 	}
 
 	public async loadFromAlbum(albumId: number): Promise<Photo[]> {
+		if (albumId < 1) {
+			throw new Error('Album ID must be greater than zero');
+		}
+
 		const response = await this.gateway.fetchPhotosByAlbumId(albumId, { limit: this.limit });
 
 		return response.map(createPhoto);
-	}
-
-	private async fetchPhotos() {
-		try {
-			return await this.gateway.fetchPhotos({
-				limit: this.limit
-			});
-		} catch (error: unknown) {
-			throw new Error(`Received error from server: '${error}'`);
-		}
 	}
 }
