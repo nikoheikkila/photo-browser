@@ -18,4 +18,13 @@ test.describe('Single photo page', () => {
 
 		await expect(page).toHaveURL('/');
 	});
+
+	test('allows user to return to album page', async ({ page }) => {
+		await page.goto('/photo/1');
+		const albumLink = page.getByRole('link', { name: 'Back to album' });
+
+		await albumLink.click();
+
+		await expect(page).toHaveURL(/\/album\/\d/);
+	});
 });
