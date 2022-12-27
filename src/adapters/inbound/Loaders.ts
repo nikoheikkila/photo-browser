@@ -6,13 +6,30 @@ import type { RouteParams } from '../../routes/$types';
 import type { Photo } from '../../domain/Photo';
 
 type Dictionary = Record<string, unknown>;
-type LoadPhotosRoute = Load<RouteParams, null, Dictionary, { photos: Photo[] }, '/'>;
+
+export type SinglePhotoResponse = {
+	photo: Photo;
+};
+
+export type PhotoCollectionResponse = {
+	photos: Photo[];
+};
+
+type LoadPhotosRoute = Load<RouteParams, null, Dictionary, PhotoCollectionResponse, '/'>;
 type LoadPhotoRoute = Load<
 	RouteParams & { id: string },
 	null,
 	Dictionary,
-	{ photo: Photo },
+	SinglePhotoResponse,
 	'/photo/[id]'
+>;
+
+type LoadAlbumRoute = Load<
+	RouteParams & { id: string },
+	null,
+	Dictionary,
+	PhotoCollectionResponse,
+	'/album/[id]'
 >;
 
 export const loadPhotos: LoadPhotosRoute = async () => {
@@ -40,6 +57,21 @@ export const loadPhoto: LoadPhotoRoute = async ({ params }) => {
 	} catch (err: unknown) {
 		throw error(404, {
 			message: `Photo not found with given ID ${id}`
+		});
+	}
+};
+
+export const loadAlbum: LoadAlbumRoute = async ({ params }) => {
+	const id = Number.parseInt(params.id, 10);
+	const browser = new PhotoBrowser(Gateway());
+
+	try {
+		const photos = await browser.loadFromAlbum(id);
+
+		return { photos };
+	} catch (err: unknown) {
+		throw error(404, {
+			message: `Photo album not found with given ID ${id}`
 		});
 	}
 };

@@ -1,19 +1,19 @@
 import { expect, test } from '@playwright/test';
+
 export const captionPattern = /^Caption: (.+)$/;
 
-test.describe('Photo listing', () => {
+test.describe('Albums page', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/');
-		await expect(page.getByRole('main')).toBeVisible();
+		await page.goto('/album/1');
 	});
 
-	test('page has expected heading', async ({ page }) => {
-		const header = page.getByRole('heading', { name: 'Photo Browser' });
+	test('shows photos belonging to a single album', async ({ page }) => {
+		const numberOfPhotos = await page.getByAltText(captionPattern).count();
 
-		await expect(header).toBeVisible();
+		expect(numberOfPhotos).toBeGreaterThan(0);
 	});
 
-	test('page lists all the photos with accessible screen reader texts', async ({ page }) => {
+	test('lists photos with accessible screen reader texts', async ({ page }) => {
 		const photos = page.locator('img');
 		const accessiblePhotos = page.getByAltText(captionPattern);
 		const numberOfAllPhotos = await photos.count();

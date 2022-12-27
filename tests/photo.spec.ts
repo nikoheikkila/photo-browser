@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
+export const captionPattern = /^Caption: (.+)$/;
 
 test.describe('Single photo page', () => {
 	test('shows details for a single photo', async ({ page }) => {
 		await page.goto('/photo/1');
 
-		const photo = page.getByAltText(/^Caption: (.+)$/);
+		const photo = page.getByAltText(captionPattern);
 
 		await expect(photo).toBeVisible();
 	});
