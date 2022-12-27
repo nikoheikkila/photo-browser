@@ -1,18 +1,3 @@
-import type { PageLoad } from './$types';
-import PhotoBrowser from '../services/PhotoBrowser';
-import { APIGateway } from '../adapters/outbound/Gateway';
-import { error } from '@sveltejs/kit';
+import { loadPhotos } from '../adapters/inbound/Loaders';
 
-export const load = (async () => {
-	const browser = new PhotoBrowser(new APIGateway());
-
-	try {
-		const photos = await browser.loadPhotos();
-
-		return { photos };
-	} catch (err: unknown) {
-		throw error(500, {
-			message: `Failed to load photos. Reason: ${err}`
-		});
-	}
-}) satisfies PageLoad;
+export const load = loadPhotos;

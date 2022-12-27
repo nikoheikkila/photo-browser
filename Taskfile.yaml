@@ -37,6 +37,8 @@ tasks:
     desc: Run the development server
     cmds:
       - npx vite dev
+    env:
+      NODE_ENV: development
 
   build:
     desc: Build the application
@@ -46,6 +48,8 @@ tasks:
       - '{{.SOURCE_FILES}}'
     cmds:
       - npx vite build
+    env:
+      NODE_ENV: production
 
   test:unit:
     desc: Run unit tests
@@ -54,11 +58,15 @@ tasks:
       - '{{.TEST_FILES}}'
     cmds:
       - npx vitest run
+    env:
+      NODE_ENV: test
 
   test:watch:
     desc: Run unit tests in watch mode
     cmds:
       - npx vitest watch
+    env:
+      NODE_ENV: test
 
   test:e2e:
     desc: Run end-to-end tests
@@ -71,6 +79,8 @@ tasks:
     cmds:
       - npx playwright install
       - npx playwright test
+    env:
+      NODE_ENV: production
 
   test:
     desc: Run the full acceptance test suite
