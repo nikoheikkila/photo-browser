@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import * as Photo from '../Photo';
+import * as Photo from './Photo';
 
 describe('Photo', () => {
 	describe('creation', () => {

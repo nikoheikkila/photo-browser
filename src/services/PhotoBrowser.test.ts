@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test, vitest } from 'vitest';
-import type { FetchPhotosArgs, JSONResponse, PhotoGateway } from '../../adapters/Gateway';
-import PhotoBrowser from '../PhotoBrowser';
+import type { FetchPhotosArgs, JSONResponse, PhotoGateway } from '../adapters/Gateway';
+import PhotoBrowser from './PhotoBrowser';
 import { faker } from '@faker-js/faker';
 
 export class FakeGateway implements PhotoGateway {
