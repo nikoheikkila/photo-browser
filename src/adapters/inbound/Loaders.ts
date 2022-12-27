@@ -4,23 +4,28 @@ import PhotoBrowser from '../../services/PhotoBrowser';
 import Gateway from '../outbound/Gateway';
 import type { RouteParams } from '../../routes/$types';
 import type { Photo } from '../../domain/Photo';
+import * as Group from '../../domain/Group';
 
 type Dictionary = Record<string, unknown>;
 
-export type SinglePhotoResponse = {
-	photo: Photo;
-};
-
-export type PhotoCollectionResponse = {
+export type AllPhotos = {
 	photos: Photo[];
 };
 
-type LoadPhotosRoute = Load<RouteParams, null, Dictionary, PhotoCollectionResponse, '/'>;
+export type GroupedPhotos = {
+	photos: Record<number, Photo[]>;
+};
+
+export type SinglePhoto = {
+	photo: Photo;
+};
+
+type LoadPhotosRoute = Load<RouteParams, null, Dictionary, GroupedPhotos, '/'>;
 type LoadPhotoRoute = Load<
 	RouteParams & { id: string },
 	null,
 	Dictionary,
-	SinglePhotoResponse,
+	SinglePhoto,
 	'/photo/[id]'
 >;
 
@@ -28,17 +33,18 @@ type LoadAlbumRoute = Load<
 	RouteParams & { id: string },
 	null,
 	Dictionary,
-	PhotoCollectionResponse,
+	AllPhotos,
 	'/album/[id]'
 >;
 
 export const loadPhotos: LoadPhotosRoute = async () => {
+	const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
 	const browser = new PhotoBrowser(Gateway());
 
 	try {
 		const photos = await browser.loadPhotos();
 
-		return { photos };
+		return { photos: groupByAlbum(photos) };
 	} catch (err: unknown) {
 		throw error(500, {
 			message: `Failed to load photos. Reason: ${err}`

@@ -1,9 +1,9 @@
 <script lang="ts">
 	import PhotoGrid from '../../../components/PhotoGrid.svelte';
 	import Loading from '../../../components/Loading.svelte';
-	import type { PhotoCollectionResponse } from '../../../adapters/inbound/Loaders';
+	import type { AllPhotos } from '../../../adapters/inbound/Loaders';
 
-	export let data: PhotoCollectionResponse = {
+	export let data: AllPhotos = {
 		photos: []
 	};
 

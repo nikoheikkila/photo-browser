@@ -1,18 +1,12 @@
 <script lang="ts">
-	import type { PageData } from './$types';
 	import PhotoGrid from '../components/PhotoGrid.svelte';
-	import Loading from '../components/Loading.svelte';
+	import type { GroupedPhotos } from '../adapters/inbound/Loaders';
 
-	export let data: PageData = {
-		photos: []
-	};
+	export let data: GroupedPhotos;
 
-	$: photos = data.photos || [];
-	$: isLoading = photos.length === 0;
+	$: entries = Object.entries(data.photos);
 </script>
 
-{#if isLoading}
-	<Loading message="Loading photos. Please wait..." />
-{/if}
-
-<PhotoGrid bind:photos />
+{#each entries as [albumId, photos] (albumId)}
+	<PhotoGrid bind:albumId bind:photos />
+{/each}
