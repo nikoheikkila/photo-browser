@@ -1,4 +1,4 @@
-import { env } from '$env/dynamic/public';
+import Environment from './Environment';
 
 export type FetchParams = {
 	/**
@@ -16,9 +16,11 @@ export interface PhotoGateway<T extends Dictionary> {
 
 export class APIGateway implements PhotoGateway<Dictionary> {
 	private readonly fetch: Fetcher;
+	private readonly urlBuilder: URLBuilder;
 
 	constructor(fetch?: Fetcher) {
 		this.fetch = fetch || globalThis.fetch;
+		this.urlBuilder = new URLBuilder();
 	}
 
 	public async fetchPhotos(args: FetchParams): Promise<Dictionary[]> {
@@ -34,7 +36,7 @@ export class APIGateway implements PhotoGateway<Dictionary> {
 	}
 
 	private async get(route: string, query?: FetchParams) {
-		return this.fetch(URLBuilder.build(route, query)).then(this.toJSON);
+		return this.fetch(this.urlBuilder.build(route, query)).then(this.toJSON);
 	}
 
 	private toJSON(response: Response) {
@@ -107,8 +109,13 @@ export class FakeGateway implements PhotoGateway<Dictionary> {
 }
 
 class URLBuilder {
-	public static build(route: string, query?: FetchParams) {
-		const url = this.verifyURL();
+	private readonly environment: Environment;
+
+	constructor() {
+		this.environment = new Environment();
+	}
+	public build(route: string, query?: FetchParams) {
+		const url = new URL(this.environment.getPublicVariable('PUBLIC_PHOTO_API_URL'));
 		url.pathname = route;
 
 		for (const [key, value] of Object.entries(query || {})) {
@@ -116,15 +123,5 @@ class URLBuilder {
 		}
 
 		return url;
-	}
-
-	private static verifyURL() {
-		const url = env.PUBLIC_PHOTO_API_URL;
-
-		if (!url || url.length === 0) {
-			throw new Error('Missing environment variable: PUBLIC_PHOTO_API_URL');
-		}
-
-		return new URL(url);
 	}
 }
