@@ -1,7 +1,11 @@
 import { env } from '$env/dynamic/public';
 
 export type FetchParams = {
-	limit: number;
+	/**
+	 * Maximum number of entities to return.
+	 * Note the underscore prefix required by Typicode API.
+	 */
+	_limit: number;
 };
 
 export interface PhotoGateway<T extends Dictionary> {
@@ -62,11 +66,11 @@ export class FakeGateway implements PhotoGateway<Dictionary> {
 		this.error = error;
 	}
 
-	public async fetchPhotos(args: FetchParams): Promise<Dictionary[]> {
+	public async fetchPhotos(params: FetchParams): Promise<Dictionary[]> {
 		if (this.error) throw this.error;
 		if (this.stubs.length > 0) return [...this.stubs];
 
-		const { limit } = args;
+		const { _limit: limit } = params;
 
 		return Array.from({ length: limit }, (_, index) => {
 			return {
@@ -90,7 +94,7 @@ export class FakeGateway implements PhotoGateway<Dictionary> {
 		if (this.error) throw this.error;
 		if (this.stubs.length > 0) return [...this.stubs];
 
-		const { limit } = params;
+		const { _limit: limit } = params;
 
 		return Array.from({ length: limit }, (_, index) => {
 			return {

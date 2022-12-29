@@ -4,7 +4,7 @@ import { createPhoto } from '../domain/Photo';
 
 export default class PhotoBrowser {
 	private readonly gateway: PhotoGateway<Dictionary>;
-	private limit = 100;
+	private limit = 1000;
 
 	constructor(gateway: PhotoGateway<Dictionary>) {
 		this.gateway = gateway;
@@ -18,7 +18,7 @@ export default class PhotoBrowser {
 	}
 
 	public async loadPhotos(): Promise<Photo[]> {
-		const response = await this.gateway.fetchPhotos({ limit: this.limit });
+		const response = await this.gateway.fetchPhotos({ _limit: this.limit });
 
 		return response.map(createPhoto);
 	}
@@ -38,7 +38,7 @@ export default class PhotoBrowser {
 			throw new Error('Album ID must be greater than zero');
 		}
 
-		const response = await this.gateway.fetchPhotosByAlbumId(albumId, { limit: this.limit });
+		const response = await this.gateway.fetchPhotosByAlbumId(albumId, { _limit: this.limit });
 
 		return response.map(createPhoto);
 	}

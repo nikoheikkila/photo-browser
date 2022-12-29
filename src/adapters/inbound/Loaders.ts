@@ -41,7 +41,7 @@ export const loadPhotos: LoadPhotosRoute = async ({ fetch }) => {
 	const browser = new PhotoBrowser(new APIGateway(fetch));
 
 	try {
-		const photos = await browser.loadPhotos();
+		const photos = await browser.withLimit(500).loadPhotos();
 
 		return { photos: groupByAlbum(photos) };
 	} catch (error: unknown) {
@@ -69,7 +69,7 @@ export const loadAlbum: LoadAlbumRoute = async ({ fetch, params }) => {
 	const browser = new PhotoBrowser(new APIGateway(fetch));
 
 	try {
-		const photos = await browser.loadFromAlbum(id);
+		const photos = await browser.withLimit(50).loadFromAlbum(id);
 
 		return { photos };
 	} catch (error: unknown) {
