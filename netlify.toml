@@ -1,6 +1,3 @@
 [build]
 command = "yarn build"
 publish = "build"
-
-[build.environment]
-PUBLIC_PHOTO_API_URL = 'https://jsonplaceholder.typicode.com'

@@ -30,7 +30,7 @@ export class APIGateway implements PhotoGateway<Dictionary> {
 	}
 
 	private async get(route: string, query?: FetchParams) {
-		return this.fetch(this.buildURL(route, query)).then(this.toJSON);
+		return this.fetch(URLBuilder.build(route, query)).then(this.toJSON);
 	}
 
 	private toJSON(response: Response) {
@@ -39,17 +39,6 @@ export class APIGateway implements PhotoGateway<Dictionary> {
 		}
 
 		return response.json();
-	}
-
-	private buildURL(route: string, query?: FetchParams) {
-		const url = new URL(env.PUBLIC_PHOTO_API_URL || '');
-		url.pathname = route;
-
-		for (const [key, value] of Object.entries(query || {})) {
-			url.searchParams.append(key, value.toString());
-		}
-
-		return url;
 	}
 }
 
@@ -110,5 +99,28 @@ export class FakeGateway implements PhotoGateway<Dictionary> {
 				albumId
 			};
 		});
+	}
+}
+
+class URLBuilder {
+	public static build(route: string, query?: FetchParams) {
+		const url = this.verifyURL();
+		url.pathname = route;
+
+		for (const [key, value] of Object.entries(query || {})) {
+			url.searchParams.append(key, value.toString());
+		}
+
+		return url;
+	}
+
+	private static verifyURL() {
+		const url = env.PUBLIC_PHOTO_API_URL;
+
+		if (!url || url.length === 0) {
+			throw new Error('Missing environment variable: PUBLIC_PHOTO_API_URL');
+		}
+
+		return new URL(url);
 	}
 }
