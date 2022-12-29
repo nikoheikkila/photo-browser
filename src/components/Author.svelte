@@ -1,12 +1,20 @@
+<script lang="ts">
+	let attributes = {
+		rel: 'noopener noreferrer',
+		target: '_blank'
+	};
+</script>
+
 <p class="drac-text drac-text-bold drac-text-white">
-	Made by <a
-		class="drac-text-red"
-		rel="me noreferrer"
-		href="https://nikoheikkila.fi"
-		target="_blank">Niko Heikkilä</a
-	>
-	with ♥️ and
-	<a class="drac-text-red" href="https://kit.svelte.dev/" target="_blank" rel="noreferrer"
-		>SvelteKit</a
-	>
+	Made by <a href="https://nikoheikkila.fi" {...attributes}>Niko Heikkilä</a>
+	with <i>♥️</i>,
+	<a href="https://ui.draculatheme.com/" {...attributes}>Dracula UI 🧛🏻‍♂️</a>, and
+	<a href="https://kit.svelte.dev/" {...attributes}>SvelteKit</a>.
 </p>
+
+<style>
+	a,
+	i {
+		color: var(--red-900);
+	}
+</style>

@@ -7,3 +7,7 @@ declare namespace App {
 	// interface PageData {}
 	// interface Platform {}
 }
+
+// Customized types
+type Dictionary<K = string, V = unknown> = Record<K, V>;
+type Fetcher = typeof fetch;

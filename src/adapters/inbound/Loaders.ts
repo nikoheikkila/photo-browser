@@ -1,19 +1,18 @@
 import type { HttpError, Load } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import PhotoBrowser from '../../services/PhotoBrowser';
-import Gateway from '../outbound/Gateway';
+import { APIGateway } from '../outbound/Gateway';
 import type { RouteParams } from '../../routes/$types';
 import type { Photo } from '../../domain/Photo';
 import * as Group from '../../domain/Group';
-
-type Dictionary = Record<string, unknown>;
+import { handleError } from '../outbound/Errors';
 
 export type AllPhotos = {
 	photos: Photo[];
 };
 
 export type GroupedPhotos = {
-	photos: Record<number, Photo[]>;
+	photos: Dictionary<number, Photo[]>;
 };
 
 export type SinglePhoto = {
@@ -39,42 +38,42 @@ type LoadAlbumRoute = Load<
 
 export const loadPhotos: LoadPhotosRoute = async ({ fetch }) => {
 	const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
-	const browser = new PhotoBrowser(Gateway(fetch));
+	const browser = new PhotoBrowser(new APIGateway(fetch));
 
 	try {
 		const photos = await browser.loadPhotos();
 
 		return { photos: groupByAlbum(photos) };
-	} catch (err: unknown) {
-		console.error(err);
+	} catch (error: unknown) {
+		handleError(error);
 		throw internalError('Failed to load photos');
 	}
 };
 
 export const loadPhoto: LoadPhotoRoute = async ({ fetch, params }) => {
 	const id = Number.parseInt(params.id, 10);
-	const browser = new PhotoBrowser(Gateway(fetch));
+	const browser = new PhotoBrowser(new APIGateway(fetch));
 
 	try {
 		const photo = await browser.loadPhoto(id);
 
 		return { photo };
-	} catch (err: unknown) {
-		console.error(err);
+	} catch (error: unknown) {
+		handleError(error);
 		throw notFoundError(`Could not load photo with ID ${id}`);
 	}
 };
 
 export const loadAlbum: LoadAlbumRoute = async ({ fetch, params }) => {
 	const id = Number.parseInt(params.id, 10);
-	const browser = new PhotoBrowser(Gateway(fetch));
+	const browser = new PhotoBrowser(new APIGateway(fetch));
 
 	try {
 		const photos = await browser.loadFromAlbum(id);
 
 		return { photos };
-	} catch (err: unknown) {
-		console.error(err);
+	} catch (error: unknown) {
+		handleError(error);
 		throw notFoundError(`Could not load album with ID ${id}`);
 	}
 };

@@ -5,7 +5,7 @@
 	import Footer from '../components/Footer.svelte';
 </script>
 
-<main>
+<main class="drac-box drac-w-full">
 	<Navigation />
 	<Title />
 	<slot />
@@ -13,10 +13,6 @@
 </main>
 
 <style>
-	:global(body) {
-		min-height: 100vh;
-	}
-
 	:global(a) {
 		color: cyan;
 		text-decoration: none;

@@ -1,14 +1,10 @@
-import * as process from 'process';
-
-type Fetcher = typeof fetch;
-
-export type Dictionary = Record<string, unknown>;
+import { env } from '$env/dynamic/public';
 
 export type FetchParams = {
 	limit: number;
 };
 
-export interface PhotoGateway<T> {
+export interface PhotoGateway<T extends Dictionary> {
 	fetchPhotos(args: FetchParams): Promise<T[]>;
 	fetchPhoto(id: number): Promise<T>;
 	fetchPhotosByAlbumId(albumId: number, params: FetchParams): Promise<T[]>;
@@ -16,7 +12,6 @@ export interface PhotoGateway<T> {
 
 export class APIGateway implements PhotoGateway<Dictionary> {
 	private readonly fetch: Fetcher;
-	private readonly baseURL = 'https://jsonplaceholder.typicode.com';
 
 	constructor(fetch?: Fetcher) {
 		this.fetch = fetch || globalThis.fetch;
@@ -35,7 +30,7 @@ export class APIGateway implements PhotoGateway<Dictionary> {
 	}
 
 	private async get(route: string, query?: FetchParams) {
-		return this.fetch(this.buildURL(route, query)).then(this.toJSON).catch(this.handleError);
+		return this.fetch(this.buildURL(route, query)).then(this.toJSON);
 	}
 
 	private toJSON(response: Response) {
@@ -46,13 +41,8 @@ export class APIGateway implements PhotoGateway<Dictionary> {
 		return response.json();
 	}
 
-	private handleError(error: Error): never {
-		console.error(error);
-		throw error;
-	}
-
-	private buildURL(route: string, query: FetchParams | undefined) {
-		const url = new URL(this.baseURL);
+	private buildURL(route: string, query?: FetchParams) {
+		const url = new URL(env.PUBLIC_PHOTO_API_URL || '');
 		url.pathname = route;
 
 		for (const [key, value] of Object.entries(query || {})) {
@@ -66,6 +56,15 @@ export class APIGateway implements PhotoGateway<Dictionary> {
 export class FakeGateway implements PhotoGateway<Dictionary> {
 	private stubs: Dictionary[] = [];
 	private error: Error | null = null;
+
+	private readonly stubPhoto = {
+		id: 1,
+		albumId: 3,
+		title: 'My Photo',
+		url: 'https://via.placeholder.com/600/92c952',
+		thumbnailUrl: 'https://via.placeholder.com/150/92c952'
+	};
+
 	public feedWith(stubs: Dictionary[]) {
 		this.stubs = stubs;
 	}
@@ -82,11 +81,8 @@ export class FakeGateway implements PhotoGateway<Dictionary> {
 
 		return Array.from({ length: limit }, (_, index) => {
 			return {
-				id: index + 1,
-				albumId: 10,
-				title: 'My Photo',
-				url: 'https://via.placeholder.com/600/92c952',
-				thumbnailUrl: 'https://via.placeholder.com/150/92c952'
+				...this.stubPhoto,
+				id: index + 1
 			};
 		});
 	}
@@ -96,11 +92,8 @@ export class FakeGateway implements PhotoGateway<Dictionary> {
 		if (this.stubs.length > 0) return this.stubs[0];
 
 		return {
-			id,
-			albumId: 10,
-			title: 'My Photo',
-			url: 'https://via.placeholder.com/600/92c952',
-			thumbnailUrl: 'https://via.placeholder.com/150/92c952'
+			...this.stubPhoto,
+			id
 		};
 	}
 
@@ -112,16 +105,10 @@ export class FakeGateway implements PhotoGateway<Dictionary> {
 
 		return Array.from({ length: limit }, (_, index) => {
 			return {
+				...this.stubPhoto,
 				id: index + 1,
-				albumId,
-				title: 'My Photo',
-				url: 'https://via.placeholder.com/600/92c952',
-				thumbnailUrl: 'https://via.placeholder.com/150/92c952'
+				albumId
 			};
 		});
 	}
 }
-
-export default (fetch: Fetcher) => {
-	return process.env.NODE_ENV === 'test' ? new FakeGateway() : new APIGateway(fetch);
-};

@@ -1,11 +1,12 @@
 <script lang="ts">
 	import type { Photo } from '../domain/Photo';
+	import Link from './Link.svelte';
 
 	export let photo: Photo;
 </script>
 
-<div class="drac-box drac-d-inline">
-	<a href="/photo/{photo.id}" data-sveltekit-preload-data="tap">
+<section class="drac-box drac-d-inline">
+	<Link to="/photo/{photo.id}">
 		<img
 			class="drac-rounded-2xl drac-p-xxs"
 			id="photo-{photo.id}"
@@ -13,5 +14,5 @@
 			alt="Caption: {photo.title}"
 			loading="lazy"
 		/>
-	</a>
-</div>
+	</Link>
+</section>

@@ -4,7 +4,7 @@ import type { Photo } from './Photo';
 
 describe('Grouping', () => {
 	test('does not group an empty collection', () => {
-		const grouper = Group.byKey<unknown>((_) => '');
+		const grouper = Group.byKey<unknown>(() => '');
 
 		expect(grouper([])).toStrictEqual({});
 	});

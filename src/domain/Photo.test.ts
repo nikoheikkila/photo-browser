@@ -1,11 +1,10 @@
 import { describe, expect, test } from 'vitest';
-
-import * as Photo from './Photo';
+import { createPhoto } from './Photo';
 
 describe('Photo', () => {
 	describe('creation', () => {
 		test('returns entity with valid data', () => {
-			const photo = Photo.createPhoto({
+			const photo = createPhoto({
 				id: 10,
 				albumId: 20,
 				title: 'My Cat',
@@ -21,7 +20,7 @@ describe('Photo', () => {
 		});
 
 		test('returns entity with URL objects', () => {
-			const photo = Photo.createPhoto({
+			const photo = createPhoto({
 				url: 'https://via.placeholder.com/600/92c952',
 				thumbnailUrl: 'https://via.placeholder.com/150/92c952'
 			});
@@ -30,13 +29,13 @@ describe('Photo', () => {
 			expect(photo.thumbnailUrl).toBeInstanceOf(URL);
 		});
 
-		test('throws error when malformed URLs', () => {
+		test('throws error with malformed URLs', () => {
 			expect(() =>
-				Photo.createPhoto({
+				createPhoto({
 					url: new URL('non-url'),
 					thumbnailUrl: new URL('non-url')
 				})
-			).toThrowError();
+			).toThrowError('Invalid URL');
 		});
 	});
 });

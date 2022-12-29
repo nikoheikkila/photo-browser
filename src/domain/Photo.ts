@@ -1,4 +1,5 @@
 import * as z from 'zod';
+import { handleError } from '../adapters/outbound/Errors';
 
 const positiveInteger = (defaultValue: number) =>
 	z.number().int().min(1).optional().default(defaultValue);
@@ -24,7 +25,7 @@ export function createPhoto(args: Record<string, unknown>): Photo {
 	try {
 		return schema.parse(args);
 	} catch (error: unknown) {
-		console.error(error);
+		handleError(error);
 
 		if (error instanceof z.ZodError) {
 			throw new Error('Received malformed JSON response');

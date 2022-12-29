@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Photo } from '../domain/Photo';
+	import Link from './Link.svelte';
 
 	export let photo: Photo;
 </script>
@@ -13,6 +14,6 @@
 	</figure>
 
 	<footer class="drac-text drac-text-bold">
-		<a href="/album/{photo.albumId}">Back to album</a>
+		<Link to="/album/{photo.albumId}">Back to album</Link>
 	</footer>
 </section>

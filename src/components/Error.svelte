@@ -2,6 +2,10 @@
 	export let message: string;
 
 	let detailsOpen = false;
+
+	const toggleDetails = () => {
+		detailsOpen = !detailsOpen;
+	};
 </script>
 
 <section
@@ -16,9 +20,7 @@
 		id="details"
 		class="drac-checkbox drac-checkbox-purple"
 		checked={detailsOpen}
-		on:change={() => {
-			detailsOpen = !detailsOpen;
-		}}
+		on:change={toggleDetails}
 	/>
 	<label for="details" class="drac-text drac-text-white">
 		{#if detailsOpen}
