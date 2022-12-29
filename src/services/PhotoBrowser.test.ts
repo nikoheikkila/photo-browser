@@ -1,4 +1,3 @@
-import { beforeEach, describe, expect, test, vitest } from 'vitest';
 import { FakeGateway } from '../adapters/outbound/Gateway';
 import PhotoBrowser from './PhotoBrowser';
 import { faker } from '@faker-js/faker';

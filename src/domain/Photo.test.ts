@@ -1,4 +1,3 @@
-import { describe, expect, test } from 'vitest';
 import { createPhoto, parseFullSize, parseThumbnailSize } from './Photo';
 import type { Photo } from './Photo';
 import { faker } from '@faker-js/faker';
