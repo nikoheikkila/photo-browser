@@ -215,6 +215,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@iarna/toml@npm:^2.2.5":
+  version: 2.2.5
+  resolution: "@iarna/toml@npm:2.2.5"
+  checksum: b63b2b2c4fd67969a6291543ada0303d45593801ee744b60f5390f183c03d9192bc67a217abb24be945158f1935f02840d9ffff40c0142aa171b5d3b6b6a3ea5
+  languageName: node
+  linkType: hard
+
 "@jridgewell/resolve-uri@npm:3.1.0":
   version: 3.1.0
   resolution: "@jridgewell/resolve-uri@npm:3.1.0"
@@ -313,6 +320,19 @@ __metadata:
   peerDependencies:
     "@sveltejs/kit": ^1.0.0
   checksum: e335ece5790091bf656b85085f9cecb730083dd402398424ed3ecb9024278fc4b5345ec9b0a640f1de67156eeb98898036adc81e0d32728fef51ad3c4ce864c1
+  languageName: node
+  linkType: hard
+
+"@sveltejs/adapter-netlify@npm:next":
+  version: 1.0.0-next.88
+  resolution: "@sveltejs/adapter-netlify@npm:1.0.0-next.88"
+  dependencies:
+    "@iarna/toml": ^2.2.5
+    esbuild: ^0.16.3
+    set-cookie-parser: ^2.5.1
+  peerDependencies:
+    "@sveltejs/kit": ^1.0.0-next.587
+  checksum: f4408acdd3a2f0e748b8196984660cf2991a7dd4596a5398fd626f0f590cf5694b5974c2f80203346b44e7041b3467dde349e6f6a6d6cfc604897d87f128914e
   languageName: node
   linkType: hard
 
@@ -2273,6 +2293,7 @@ __metadata:
     "@faker-js/faker": ^7.6.0
     "@playwright/test": ^1.28.1
     "@sveltejs/adapter-auto": ^1.0.0
+    "@sveltejs/adapter-netlify": next
     "@sveltejs/kit": ^1.0.0
     "@typescript-eslint/eslint-plugin": ^5.45.0
     "@typescript-eslint/parser": ^5.45.0
