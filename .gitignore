@@ -23,3 +23,5 @@ vite.config.ts.timestamp-*
 # Task
 .task/
 
+# Playwright
+test-results/

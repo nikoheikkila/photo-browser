@@ -1,4 +1,4 @@
-import type { Load } from '@sveltejs/kit';
+import type { HttpError, Load } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import PhotoBrowser from '../../services/PhotoBrowser';
 import Gateway from '../outbound/Gateway';
@@ -46,9 +46,8 @@ export const loadPhotos: LoadPhotosRoute = async () => {
 
 		return { photos: groupByAlbum(photos) };
 	} catch (err: unknown) {
-		throw error(500, {
-			message: `Failed to load photos. Reason: ${err}`
-		});
+		console.error(err);
+		throw internalError('Failed to load photos');
 	}
 };
 
@@ -61,9 +60,8 @@ export const loadPhoto: LoadPhotoRoute = async ({ params }) => {
 
 		return { photo };
 	} catch (err: unknown) {
-		throw error(404, {
-			message: `Photo not found with given ID ${id}`
-		});
+		console.error(err);
+		throw notFoundError(`Could not load photo with ID ${id}`);
 	}
 };
 
@@ -76,8 +74,17 @@ export const loadAlbum: LoadAlbumRoute = async ({ params }) => {
 
 		return { photos };
 	} catch (err: unknown) {
-		throw error(404, {
-			message: `Photo album not found with given ID ${id}`
-		});
+		console.error(err);
+		throw notFoundError(`Could not load album with ID ${id}`);
 	}
 };
+
+const notFoundError = (message: string): HttpError =>
+	error(404, {
+		message
+	});
+
+const internalError = (message: string): HttpError =>
+	error(500, {
+		message
+	});

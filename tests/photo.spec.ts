@@ -27,4 +27,13 @@ test.describe('Single photo page', () => {
 
 		await expect(page).toHaveURL(/\/album\/\d/);
 	});
+
+	test('displays informative error when photo is not found', async ({ page }) => {
+		await page.goto('/photo/0');
+
+		const alert = page.getByRole('alert');
+		await page.getByLabel('Show details').click();
+
+		await expect(alert).toContainText('Could not load photo with ID 0');
+	});
 });
