@@ -15,6 +15,6 @@
 <style>
 	a,
 	i {
-		color: var(--red-900);
+		color: var(--cyan-900);
 	}
 </style>
