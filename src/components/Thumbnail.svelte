@@ -1,8 +1,11 @@
 <script lang="ts">
 	import type { Photo } from '../domain/Photo';
 	import Link from './Link.svelte';
+	import { parseThumbnailSize } from '../domain/Photo';
 
 	export let photo: Photo;
+
+	const size = parseThumbnailSize(photo);
 </script>
 
 <section class="drac-box drac-d-inline">
@@ -13,6 +16,7 @@
 			src={photo.thumbnailUrl.href}
 			alt="Caption: {photo.title}"
 			loading="lazy"
+			{...size}
 		/>
 	</Link>
 </section>
