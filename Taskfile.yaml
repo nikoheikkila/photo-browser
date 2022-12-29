@@ -1,13 +1,21 @@
 version: 3
 
-vars:
-  SOURCE_FILES: 'src/**/*.{ts,html,svelte}'
+dotenv:
+  - .env
 
 tasks:
   install:
     desc: Install project dependencies
     cmds:
+      - task: env
       - yarn install --immutable
+
+  env:
+    internal: true
+    status:
+      - test -f .env
+    cmds:
+      - cp .env.example .env
 
   format:
     desc: Format the codebase
