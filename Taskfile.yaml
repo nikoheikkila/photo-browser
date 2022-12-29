@@ -46,6 +46,13 @@ tasks:
     env:
       NODE_ENV: production
 
+  serve:
+    desc: Serve the application
+    cmds:
+      - npx vite preview
+    env:
+      NODE_ENV: production
+
   test:unit:
     desc: Run unit tests
     cmds:
