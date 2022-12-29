@@ -1,5 +1,7 @@
 import * as process from 'process';
 
+type Fetcher = typeof fetch;
+
 export type Dictionary = Record<string, unknown>;
 
 export type FetchParams = {
@@ -13,7 +15,12 @@ export interface PhotoGateway<T> {
 }
 
 export class APIGateway implements PhotoGateway<Dictionary> {
+	private readonly fetch: Fetcher;
 	private readonly baseURL = 'https://jsonplaceholder.typicode.com';
+
+	constructor(fetch?: Fetcher) {
+		this.fetch = fetch || globalThis.fetch;
+	}
 
 	public async fetchPhotos(args: FetchParams): Promise<Dictionary[]> {
 		return this.get('/photos', args);
@@ -28,7 +35,7 @@ export class APIGateway implements PhotoGateway<Dictionary> {
 	}
 
 	private async get(route: string, query?: FetchParams) {
-		return fetch(this.buildURL(route, query)).then(this.toJSON).catch(this.handleError);
+		return this.fetch(this.buildURL(route, query)).then(this.toJSON).catch(this.handleError);
 	}
 
 	private toJSON(response: Response) {
@@ -115,6 +122,6 @@ export class FakeGateway implements PhotoGateway<Dictionary> {
 	}
 }
 
-export default () => {
-	return process.env.NODE_ENV === 'test' ? new FakeGateway() : new APIGateway();
+export default (fetch: Fetcher) => {
+	return process.env.NODE_ENV === 'test' ? new FakeGateway() : new APIGateway(fetch);
 };

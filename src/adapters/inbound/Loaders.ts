@@ -37,9 +37,9 @@ type LoadAlbumRoute = Load<
 	'/album/[id]'
 >;
 
-export const loadPhotos: LoadPhotosRoute = async () => {
+export const loadPhotos: LoadPhotosRoute = async ({ fetch }) => {
 	const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
-	const browser = new PhotoBrowser(Gateway());
+	const browser = new PhotoBrowser(Gateway(fetch));
 
 	try {
 		const photos = await browser.loadPhotos();
@@ -51,9 +51,9 @@ export const loadPhotos: LoadPhotosRoute = async () => {
 	}
 };
 
-export const loadPhoto: LoadPhotoRoute = async ({ params }) => {
+export const loadPhoto: LoadPhotoRoute = async ({ fetch, params }) => {
 	const id = Number.parseInt(params.id, 10);
-	const browser = new PhotoBrowser(Gateway());
+	const browser = new PhotoBrowser(Gateway(fetch));
 
 	try {
 		const photo = await browser.loadPhoto(id);
@@ -65,9 +65,9 @@ export const loadPhoto: LoadPhotoRoute = async ({ params }) => {
 	}
 };
 
-export const loadAlbum: LoadAlbumRoute = async ({ params }) => {
+export const loadAlbum: LoadAlbumRoute = async ({ fetch, params }) => {
 	const id = Number.parseInt(params.id, 10);
-	const browser = new PhotoBrowser(Gateway());
+	const browser = new PhotoBrowser(Gateway(fetch));
 
 	try {
 		const photos = await browser.loadFromAlbum(id);
