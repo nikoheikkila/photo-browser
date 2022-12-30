@@ -1,7 +1,7 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 
 const isPipeline = !!process.env.CI;
-const webServerPort = 4173;
+const webServerPort = 5173;
 const baseURL = `http://localhost:${webServerPort}`;
 
 const config: PlaywrightTestConfig = {
@@ -19,7 +19,8 @@ const config: PlaywrightTestConfig = {
 	},
 	webServer: {
 		command: `npx vite preview --port ${webServerPort}`,
-		url: baseURL
+		url: baseURL,
+		reuseExistingServer: true
 	}
 };
 
