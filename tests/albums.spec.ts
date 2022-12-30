@@ -8,15 +8,18 @@ test.describe('Albums page', () => {
 	});
 
 	test('shows photos belonging to a single album', async ({ page }) => {
-		const numberOfPhotos = await page.getByAltText(captionPattern).count();
+		const title = page.getByRole('heading', { name: 'Photos from album 1' });
+		const photos = page.getByAltText(captionPattern);
 
-		expect(numberOfPhotos).toBeGreaterThan(0);
+		await expect(title).toBeVisible();
+		await expect(photos).toHaveCount(50);
 	});
 
 	test('lists photos with accessible screen reader texts', async ({ page }) => {
-		const photos = page.locator('img');
+		const allPhotos = page.locator('img');
 		const accessiblePhotos = page.getByAltText(captionPattern);
-		const numberOfAllPhotos = await photos.count();
+
+		const numberOfAllPhotos = await allPhotos.count();
 
 		await expect(accessiblePhotos).toHaveCount(numberOfAllPhotos);
 	});
