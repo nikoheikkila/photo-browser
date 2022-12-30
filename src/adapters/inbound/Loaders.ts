@@ -11,6 +11,11 @@ export type AllPhotos = {
 	photos: Photo[];
 };
 
+export type AlbumPhotos = {
+	albumId: number;
+	photos: Photo[];
+};
+
 export type GroupedPhotos = {
 	photos: Dictionary<number, Photo[]>;
 };
@@ -32,13 +37,13 @@ type LoadAlbumRoute = Load<
 	RouteParams & { id: string },
 	null,
 	Dictionary,
-	AllPhotos,
+	AlbumPhotos,
 	'/album/[id]'
 >;
 
 export const loadPhotos: LoadPhotosRoute = async ({ fetch }) => {
 	const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
-	const browser = new PhotoBrowser(new APIGateway(fetch));
+	const browser = new PhotoBrowser(createGateway(fetch));
 
 	try {
 		const photos = await browser.withLimit(500).loadPhotos();
@@ -81,12 +86,14 @@ export const loadAlbum: LoadAlbumRoute = async ({ fetch, params }) => {
 	try {
 		const photos = await browser.withLimit(50).loadFromAlbum(id);
 
-		return { photos };
+		return { albumId: id, photos };
 	} catch (error: unknown) {
 		handleError(error);
 		throw notFoundError(`Could not load album with ID ${id}`);
 	}
 };
+
+const createGateway = (fetch: Fetcher) => new APIGateway(fetch);
 
 const notFoundError = (message: string): HttpError =>
 	error(404, {

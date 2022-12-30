@@ -1,11 +1,51 @@
 <script lang="ts">
 	import PhotoGrid from '../../../components/PhotoGrid.svelte';
-	import type { AllPhotos } from '../../../adapters/inbound/Loaders';
+	import type { AlbumPhotos } from '../../../adapters/inbound/Loaders';
+	import Warning from '../../../components/Warning.svelte';
+	import Link from '../../../components/Link.svelte';
 
-	export let data: AllPhotos;
+	export let data: AlbumPhotos = {
+		albumId: 1,
+		photos: []
+	};
 
-	$: photos = data.photos || [];
-	$: albumId = String(photos[0]?.albumId);
+	$: photos = data.photos;
+	$: isEmptyAlbum = photos.length === 0;
+	$: albumId = data.albumId;
+	$: onFirstAlbum = albumId === 1;
 </script>
 
-<PhotoGrid bind:albumId bind:photos />
+{#if isEmptyAlbum}
+	<Warning
+		title="You stumbled upon an empty album"
+		message="Don't worry there will be photos here in the future."
+	/>
+{:else}
+	<PhotoGrid bind:albumId bind:photos />
+	<section>
+		{#if !onFirstAlbum}
+			<Link
+				className="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-purple drac-m-sm"
+				to="/album/{albumId - 1}"
+				rel="prev"
+			>
+				Previous Album
+			</Link>
+		{/if}
+		<Link
+			className="drac-btn drac-bg-purple-transparent drac-btn-ghost drac-text-purple drac-m-sm"
+			to="/album/{albumId + 1}"
+			rel="next"
+		>
+			Next album
+		</Link>
+	</section>
+{/if}
+
+<style>
+	section {
+		margin-bottom: 120px;
+		display: flex;
+		justify-content: center;
+	}
+</style>

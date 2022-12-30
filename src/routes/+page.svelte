@@ -8,5 +8,5 @@
 </script>
 
 {#each entries as [albumId, photos] (albumId)}
-	<PhotoGrid bind:albumId bind:photos />
+	<PhotoGrid albumId={Number(albumId)} bind:photos />
 {/each}
