@@ -8,18 +8,16 @@ export type FetchParams = {
 	_limit: number;
 };
 
-export interface PhotoGateway<T extends Dictionary> {
+export interface PhotoGateway<T = Dictionary> {
 	fetchPhotos(args: FetchParams): Promise<T[]>;
 	fetchPhoto(id: number): Promise<T>;
 	fetchPhotosByAlbumId(albumId: number, params: FetchParams): Promise<T[]>;
 }
 
 export class APIGateway implements PhotoGateway<Dictionary> {
-	private readonly fetch: Fetcher;
 	private readonly urlBuilder: URLBuilder;
 
-	constructor(fetch?: Fetcher) {
-		this.fetch = fetch || globalThis.fetch;
+	constructor() {
 		this.urlBuilder = new URLBuilder();
 	}
 
@@ -36,7 +34,7 @@ export class APIGateway implements PhotoGateway<Dictionary> {
 	}
 
 	private async get(route: string, query?: FetchParams) {
-		return this.fetch(this.urlBuilder.build(route, query)).then(this.toJSON);
+		return fetch(this.urlBuilder.build(route, query)).then(this.toJSON);
 	}
 
 	private toJSON(response: Response) {

@@ -1,15 +1,11 @@
 import type { HttpError, Load } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import PhotoBrowser from '../../services/PhotoBrowser';
-import { APIGateway } from '../outbound/Gateway';
+import type { PhotoGateway } from '../outbound/Gateway';
 import type { RouteParams } from '../../routes/$types';
 import type { Photo } from '../../domain/Photo';
 import * as Group from '../../domain/Group';
 import { handleError } from '../outbound/Errors';
-
-export type AllPhotos = {
-	photos: Photo[];
-};
 
 export type AlbumPhotos = {
 	albumId: number;
@@ -41,59 +37,63 @@ type LoadAlbumRoute = Load<
 	'/album/[id]'
 >;
 
-export const loadPhotos: LoadPhotosRoute = async ({ fetch }) => {
-	const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
-	const browser = new PhotoBrowser(createGateway(fetch));
+export const loadPhotos =
+	(gateway: PhotoGateway): LoadPhotosRoute =>
+	async () => {
+		const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
+		const browser = new PhotoBrowser(gateway);
 
-	try {
-		const photos = await browser.withLimit(500).loadPhotos();
+		try {
+			const photos = await browser.withLimit(500).loadPhotos();
 
-		return { photos: groupByAlbum(photos) };
-	} catch (error: unknown) {
-		handleError(error);
-		throw internalError('Failed to load photos');
-	}
-};
+			return { photos: groupByAlbum(photos) };
+		} catch (error: unknown) {
+			handleError(error);
+			throw internalError('Failed to load photos');
+		}
+	};
 
-export const loadPhoto: LoadPhotoRoute = async ({ fetch, params }) => {
-	const id = Number.parseInt(params.id, 10);
+export const loadPhoto =
+	(gateway: PhotoGateway): LoadPhotoRoute =>
+	async ({ params }) => {
+		const id = Number.parseInt(params.id, 10);
 
-	if (Number.isNaN(id) || id < 1) {
-		throw badRequestError(`Invalid photo ID '${params.id}' given`);
-	}
+		if (Number.isNaN(id) || id < 1) {
+			throw badRequestError(`Invalid photo ID '${params.id}' given`);
+		}
 
-	const browser = new PhotoBrowser(createGateway(fetch));
+		const browser = new PhotoBrowser(gateway);
 
-	try {
-		const photo = await browser.loadPhoto(id);
+		try {
+			const photo = await browser.loadPhoto(id);
 
-		return { photo };
-	} catch (error: unknown) {
-		handleError(error);
-		throw notFoundError(`Could not load photo with ID ${id}`);
-	}
-};
+			return { photo };
+		} catch (error: unknown) {
+			handleError(error);
+			throw notFoundError(`Could not load photo with ID ${id}`);
+		}
+	};
 
-export const loadAlbum: LoadAlbumRoute = async ({ fetch, params }) => {
-	const id = Number.parseInt(params.id, 10);
+export const loadAlbum =
+	(gateway: PhotoGateway): LoadAlbumRoute =>
+	async ({ params }) => {
+		const id = Number.parseInt(params.id, 10);
 
-	if (Number.isNaN(id) || id < 1) {
-		throw badRequestError(`Invalid album ID '${params.id}' given`);
-	}
+		if (Number.isNaN(id) || id < 1) {
+			throw badRequestError(`Invalid album ID '${params.id}' given`);
+		}
 
-	const browser = new PhotoBrowser(createGateway(fetch));
+		const browser = new PhotoBrowser(gateway);
 
-	try {
-		const photos = await browser.withLimit(50).loadFromAlbum(id);
+		try {
+			const photos = await browser.withLimit(50).loadFromAlbum(id);
 
-		return { albumId: id, photos };
-	} catch (error: unknown) {
-		handleError(error);
-		throw notFoundError(`Could not load album with ID ${id}`);
-	}
-};
-
-const createGateway = (fetch: Fetcher) => new APIGateway(fetch);
+			return { albumId: id, photos };
+		} catch (error: unknown) {
+			handleError(error);
+			throw notFoundError(`Could not load album with ID ${id}`);
+		}
+	};
 
 const notFoundError = (message: string): HttpError =>
 	error(404, {

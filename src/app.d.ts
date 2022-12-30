@@ -10,4 +10,3 @@ declare namespace App {
 
 // Customized types
 type Dictionary<K = string, V = unknown> = Record<K, V>;
-type Fetcher = typeof fetch;
