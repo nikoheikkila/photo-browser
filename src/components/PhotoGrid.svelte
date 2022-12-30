@@ -3,7 +3,7 @@
 	import Thumbnail from './Thumbnail.svelte';
 	import Link from './Link.svelte';
 
-	export let albumId = '1';
+	export let albumId = 1;
 	export let photos: Photo[] = [];
 </script>
 
