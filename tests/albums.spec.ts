@@ -28,4 +28,29 @@ test.describe('Albums page', () => {
 
 		await expect(page).toHaveURL(/\/photo\/\d+$/);
 	});
+
+	test('allows navigating between album pages', async ({ page }) => {
+		const nextAlbumLink = page.getByRole('link', { name: 'Next album' });
+		const previousAlbumLink = page.getByRole('link', { name: 'Previous album' });
+
+		await nextAlbumLink.click();
+		await expect(page).toHaveURL('/album/2');
+
+		await previousAlbumLink.click();
+		await expect(page).toHaveURL('/album/1');
+	});
+
+	test('does not allow navigating to previous album from the first album', async ({ page }) => {
+		const previousAlbumLink = page.getByRole('link', { name: 'Previous album' });
+
+		await expect(previousAlbumLink).toBeHidden();
+	});
+
+	test('shows warning on invalid album ID', async ({ page }) => {
+		const warning = page.getByRole('alert');
+
+		await page.goto('/album/invalid');
+
+		await expect(warning).toHaveText(/Invalid album ID 'invalid' given/);
+	});
 });

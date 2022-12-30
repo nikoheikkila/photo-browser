@@ -71,7 +71,12 @@ export const loadPhoto: LoadPhotoRoute = async ({ fetch, params }) => {
 
 export const loadAlbum: LoadAlbumRoute = async ({ fetch, params }) => {
 	const id = Number.parseInt(params.id, 10);
-	const browser = new PhotoBrowser(new APIGateway(fetch));
+
+	if (Number.isNaN(id) || id < 1) {
+		throw badRequestError(`Invalid album ID '${params.id}' given`);
+	}
+
+	const browser = new PhotoBrowser(createGateway(fetch));
 
 	try {
 		const photos = await browser.withLimit(50).loadFromAlbum(id);
