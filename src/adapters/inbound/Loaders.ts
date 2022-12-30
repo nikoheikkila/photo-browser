@@ -1,7 +1,6 @@
 import type { HttpError, Load } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
-import PhotoBrowser from '../../services/PhotoBrowser';
-import type { PhotoGateway } from '../outbound/Gateway';
+import type PhotoBrowser from '../../services/PhotoBrowser';
 import type { RouteParams } from '../../routes/$types';
 import type { Photo } from '../../domain/Photo';
 import * as Group from '../../domain/Group';
@@ -38,10 +37,9 @@ type LoadAlbumRoute = Load<
 >;
 
 export const loadPhotos =
-	(gateway: PhotoGateway): LoadPhotosRoute =>
+	(browser: PhotoBrowser): LoadPhotosRoute =>
 	async () => {
 		const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
-		const browser = new PhotoBrowser(gateway);
 
 		try {
 			const photos = await browser.withLimit(500).loadPhotos();
@@ -54,15 +52,13 @@ export const loadPhotos =
 	};
 
 export const loadPhoto =
-	(gateway: PhotoGateway): LoadPhotoRoute =>
+	(browser: PhotoBrowser): LoadPhotoRoute =>
 	async ({ params }) => {
 		const id = Number.parseInt(params.id, 10);
 
 		if (Number.isNaN(id) || id < 1) {
 			throw badRequestError(`Invalid photo ID '${params.id}' given`);
 		}
-
-		const browser = new PhotoBrowser(gateway);
 
 		try {
 			const photo = await browser.loadPhoto(id);
@@ -75,15 +71,13 @@ export const loadPhoto =
 	};
 
 export const loadAlbum =
-	(gateway: PhotoGateway): LoadAlbumRoute =>
+	(browser: PhotoBrowser): LoadAlbumRoute =>
 	async ({ params }) => {
 		const id = Number.parseInt(params.id, 10);
 
 		if (Number.isNaN(id) || id < 1) {
 			throw badRequestError(`Invalid album ID '${params.id}' given`);
 		}
-
-		const browser = new PhotoBrowser(gateway);
 
 		try {
 			const photos = await browser.withLimit(50).loadFromAlbum(id);

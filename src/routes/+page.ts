@@ -1,4 +1,4 @@
 import { loadPhotos } from '../adapters/inbound/Loaders';
-import { APIGateway } from '../adapters/outbound/Gateway';
+import { photoBrowser } from '../services';
 
-export const load = loadPhotos(new APIGateway());
+export const load = loadPhotos(photoBrowser);
