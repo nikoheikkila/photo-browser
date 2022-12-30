@@ -36,11 +36,11 @@ type LoadAlbumRoute = Load<
 	'/album/[id]'
 >;
 
+const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
+
 export const loadPhotos =
 	(browser: PhotoBrowser): LoadPhotosRoute =>
 	async () => {
-		const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
-
 		try {
 			const photos = await browser.withLimit(500).loadPhotos();
 
@@ -54,11 +54,7 @@ export const loadPhotos =
 export const loadPhoto =
 	(browser: PhotoBrowser): LoadPhotoRoute =>
 	async ({ params }) => {
-		const id = Number.parseInt(params.id, 10);
-
-		if (Number.isNaN(id) || id < 1) {
-			throw badRequestError(`Invalid photo ID '${params.id}' given`);
-		}
+		const id = parseNumericParameter(params.id, `Invalid photo ID '${params.id}' given`);
 
 		try {
 			const photo = await browser.loadPhoto(id);
@@ -73,11 +69,7 @@ export const loadPhoto =
 export const loadAlbum =
 	(browser: PhotoBrowser): LoadAlbumRoute =>
 	async ({ params }) => {
-		const id = Number.parseInt(params.id, 10);
-
-		if (Number.isNaN(id) || id < 1) {
-			throw badRequestError(`Invalid album ID '${params.id}' given`);
-		}
+		const id = parseNumericParameter(params.id, `Invalid album ID '${params.id}' given`);
 
 		try {
 			const photos = await browser.withLimit(50).loadFromAlbum(id);
@@ -88,6 +80,16 @@ export const loadAlbum =
 			throw notFoundError(`Could not load album with ID ${id}`);
 		}
 	};
+
+const parseNumericParameter = (numeric: string, errorMessage: string): number => {
+	const id = Number.parseInt(numeric, 10);
+
+	if (Number.isNaN(id) || id < 1) {
+		throw badRequestError(errorMessage);
+	}
+
+	return id;
+};
 
 const notFoundError = (message: string): HttpError =>
 	error(404, {
