@@ -14,7 +14,8 @@ const config: PlaywrightTestConfig = {
 		baseURL,
 		screenshot: 'only-on-failure',
 		video: 'retain-on-failure',
-		trace: 'retain-on-failure'
+		trace: 'retain-on-failure',
+		userAgent: 'Microsoft Playwright'
 	},
 	webServer: {
 		command: `npx vite preview --port ${webServerPort}`,
