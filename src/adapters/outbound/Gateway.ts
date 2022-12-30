@@ -1,4 +1,5 @@
 import Environment from './Environment';
+import axios, { HttpStatusCode } from 'axios';
 
 export type FetchParams = {
 	/**
@@ -14,11 +15,10 @@ export interface PhotoGateway<T = Dictionary> {
 	fetchPhotosByAlbumId(albumId: number, params: FetchParams): Promise<T[]>;
 }
 
-export class APIGateway implements PhotoGateway<Dictionary> {
-	private readonly urlBuilder: URLBuilder;
-
+export class APIGateway implements PhotoGateway {
+	private readonly environment: Environment;
 	constructor() {
-		this.urlBuilder = new URLBuilder();
+		this.environment = new Environment();
 	}
 
 	public async fetchPhotos(args: FetchParams): Promise<Dictionary[]> {
@@ -33,20 +33,23 @@ export class APIGateway implements PhotoGateway<Dictionary> {
 		return this.get(`/albums/${albumId}/photos`, params);
 	}
 
-	private async get(route: string, query?: FetchParams) {
-		return fetch(this.urlBuilder.build(route, query)).then(this.toJSON);
-	}
+	private async get<T>(route: string, params?: FetchParams): Promise<T> {
+		const url = this.environment.getPublicVariable('PUBLIC_PHOTO_API_URL') + route;
+		const response = await axios.get<T>(url, {
+			params
+		});
 
-	private toJSON(response: Response) {
-		if (!response.ok) {
-			throw new Error(`Request failed with status code ${response.status}`);
+		if (response.status !== HttpStatusCode.Ok) {
+			throw new Error(
+				`Request failed with status code ${response.status} and message ${response.statusText}`
+			);
 		}
 
-		return response.json();
+		return response.data;
 	}
 }
 
-export class FakeGateway implements PhotoGateway<Dictionary> {
+export class FakeGateway implements PhotoGateway {
 	private stubs: Dictionary[] = [];
 	private error: Error | null = null;
 
@@ -103,23 +106,5 @@ export class FakeGateway implements PhotoGateway<Dictionary> {
 				albumId
 			};
 		});
-	}
-}
-
-class URLBuilder {
-	private readonly environment: Environment;
-
-	constructor() {
-		this.environment = new Environment();
-	}
-	public build(route: string, query?: FetchParams) {
-		const url = new URL(this.environment.getPublicVariable('PUBLIC_PHOTO_API_URL'));
-		url.pathname = route;
-
-		for (const [key, value] of Object.entries(query || {})) {
-			url.searchParams.append(key, value.toString());
-		}
-
-		return url;
 	}
 }
