@@ -52,7 +52,12 @@ export const loadPhotos: LoadPhotosRoute = async ({ fetch }) => {
 
 export const loadPhoto: LoadPhotoRoute = async ({ fetch, params }) => {
 	const id = Number.parseInt(params.id, 10);
-	const browser = new PhotoBrowser(new APIGateway(fetch));
+
+	if (Number.isNaN(id) || id < 1) {
+		throw badRequestError(`Invalid photo ID '${params.id}' given`);
+	}
+
+	const browser = new PhotoBrowser(createGateway(fetch));
 
 	try {
 		const photo = await browser.loadPhoto(id);
@@ -85,5 +90,10 @@ const notFoundError = (message: string): HttpError =>
 
 const internalError = (message: string): HttpError =>
 	error(500, {
+		message
+	});
+
+const badRequestError = (message: string): HttpError =>
+	error(400, {
 		message
 	});

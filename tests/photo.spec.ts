@@ -29,11 +29,10 @@ test.describe('Single photo page', () => {
 	});
 
 	test('displays informative error when photo is not found', async ({ page }) => {
-		await page.goto('/photo/0');
-
 		const alert = page.getByRole('alert');
-		await page.getByLabel('Show details').click();
 
-		await expect(alert).toContainText('Could not load photo with ID 0');
+		await page.goto('/photo/invalid');
+
+		await expect(alert).toContainText(/Invalid photo ID 'invalid' given/);
 	});
 });
