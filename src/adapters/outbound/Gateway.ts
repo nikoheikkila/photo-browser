@@ -1,5 +1,5 @@
-import Environment from './Environment';
 import axios, { HttpStatusCode } from 'axios';
+import type { AxiosInstance } from 'axios';
 
 export type FetchParams = {
 	/**
@@ -16,9 +16,11 @@ export interface PhotoGateway<T = Dictionary> {
 }
 
 export class APIGateway implements PhotoGateway {
-	private readonly environment: Environment;
-	constructor() {
-		this.environment = new Environment();
+	private readonly client: AxiosInstance;
+	constructor(baseURL: string) {
+		this.client = axios.create({
+			baseURL
+		});
 	}
 
 	public async fetchPhotos(args: FetchParams): Promise<Dictionary[]> {
@@ -34,8 +36,7 @@ export class APIGateway implements PhotoGateway {
 	}
 
 	private async get<T>(route: string, params?: FetchParams): Promise<T> {
-		const url = this.environment.getPublicVariable('PUBLIC_PHOTO_API_URL') + route;
-		const response = await axios.get<T>(url, {
+		const response = await this.client.get<T>(route, {
 			params
 		});
 
