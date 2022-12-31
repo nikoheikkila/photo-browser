@@ -1,5 +1,5 @@
-import axios, { HttpStatusCode } from 'axios';
 import type { AxiosInstance } from 'axios';
+import axios, { AxiosError } from 'axios';
 
 export type FetchParams = {
 	/**
@@ -23,7 +23,7 @@ export class APIGateway implements PhotoGateway {
 		});
 	}
 
-	public async fetchPhotos(args: FetchParams): Promise<Dictionary[]> {
+	public async fetchPhotos(args?: FetchParams): Promise<Dictionary[]> {
 		return this.get('/photos', args);
 	}
 
@@ -31,22 +31,26 @@ export class APIGateway implements PhotoGateway {
 		return this.get(`/photos/${id}`);
 	}
 
-	public async fetchPhotosByAlbumId(albumId: number, params: FetchParams): Promise<Dictionary[]> {
+	public async fetchPhotosByAlbumId(albumId: number, params?: FetchParams): Promise<Dictionary[]> {
 		return this.get(`/albums/${albumId}/photos`, params);
 	}
 
 	private async get<T>(route: string, params?: FetchParams): Promise<T> {
-		const response = await this.client.get<T>(route, {
-			params
-		});
+		return this.client
+			.get<T>(route, {
+				params
+			})
+			.then((response) => response.data)
+			.catch(this.handleError);
+	}
 
-		if (response.status !== HttpStatusCode.Ok) {
-			throw new Error(
-				`Request failed with status code ${response.status} and message ${response.statusText}`
-			);
+	private handleError(error: unknown): never {
+		if (error instanceof AxiosError && error.response) {
+			const { status, data: message } = error.response;
+			throw new AxiosError(`HTTP ${status}: ${message}`);
 		}
 
-		return response.data;
+		throw error;
 	}
 }
 
