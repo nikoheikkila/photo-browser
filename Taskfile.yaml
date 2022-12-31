@@ -63,7 +63,7 @@ tasks:
   test:watch:
     desc: Run unit tests in watch mode
     cmds:
-      - npx vitest watch
+      - npx vitest watch --no-coverage
     env:
       NODE_ENV: test
 

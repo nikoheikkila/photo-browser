@@ -18,6 +18,11 @@ const config = {
 		},
 		sequence: {
 			shuffle: true
+		},
+		coverage: {
+			enabled: true,
+			provider: 'c8',
+			reporter: ['text', 'html']
 		}
 	},
 	fs: {

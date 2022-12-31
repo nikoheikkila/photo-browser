@@ -15,3 +15,6 @@ yarn.lock
 
 # Netlify
 /.netlify
+
+# Tests
+coverage/
