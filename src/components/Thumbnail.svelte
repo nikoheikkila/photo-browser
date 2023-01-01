@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Photo } from '../domain/Photo';
 	import Link from './Link.svelte';
-	import { parseThumbnailSize } from '../domain/Photo';
+	import PhotoBrowser from '../services/PhotoBrowser.js';
 
 	export let photo: Photo;
 
-	const size = parseThumbnailSize(photo);
+	const size = PhotoBrowser.parseThumbnailSize(photo);
 </script>
 
 <section class="drac-box drac-d-inline">

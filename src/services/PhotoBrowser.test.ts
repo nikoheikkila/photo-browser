@@ -1,6 +1,7 @@
 import { FakeGateway } from '../adapters/outbound/Gateway';
 import PhotoBrowser from './PhotoBrowser';
 import { faker } from '@faker-js/faker';
+import type { Photo } from '../domain/Photo';
 
 describe('PhotoBrowser', () => {
 	let gateway: FakeGateway;
@@ -88,7 +89,7 @@ describe('PhotoBrowser', () => {
 
 		test('throws error on invalid album ID', async () => {
 			gateway.feedWith([
-				randomPayload({
+				randomPhoto({
 					id: 1,
 					albumId: 0
 				})
@@ -99,7 +100,7 @@ describe('PhotoBrowser', () => {
 
 		test('throws error on invalid title', async () => {
 			gateway.feedWith([
-				randomPayload({
+				randomPhoto({
 					id: 1,
 					title: ''
 				})
@@ -110,7 +111,7 @@ describe('PhotoBrowser', () => {
 
 		test('throws error on invalid photo URL', async () => {
 			gateway.feedWith([
-				randomPayload({
+				randomPhoto({
 					id: 1,
 					url: 'not a URL'
 				})
@@ -121,7 +122,7 @@ describe('PhotoBrowser', () => {
 
 		test('throws error on invalid thumbnail URL', async () => {
 			gateway.feedWith([
-				randomPayload({
+				randomPhoto({
 					id: 1,
 					thumbnailUrl: 'not a URL'
 				})
@@ -198,13 +199,59 @@ describe('PhotoBrowser', () => {
 			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
+
+	describe('parsing photo dimensions', () => {
+		test('returns full width and height of the photo', () => {
+			const photo = randomPhoto({
+				url: new URL('https://via.placeholder.com/640/92c952'),
+				thumbnailUrl: new URL('https://via.placeholder.com/128/92c952')
+			});
+
+			verifyPhotoHasExactWidthAndHeight(photo, 640, 640);
+			verifyThumbnailHasExactWidthAndHeight(photo, 128, 128);
+		});
+
+		test('returns default width and height for invalid photo', () => {
+			const photo = randomPhoto({
+				url: new URL('https://via.placeholder.com/92c952'),
+				thumbnailUrl: new URL('https://via.placeholder.com/92c952')
+			});
+
+			verifyPhotoHasExactWidthAndHeight(photo, 600, 600);
+			verifyThumbnailHasExactWidthAndHeight(photo, 150, 150);
+		});
+
+		test('returns default width and height for zero dimension', () => {
+			const photo = randomPhoto({
+				url: new URL('https://via.placeholder.com/0/92c952'),
+				thumbnailUrl: new URL('https://via.placeholder.com/0/92c952')
+			});
+
+			verifyPhotoHasExactWidthAndHeight(photo, 600, 600);
+			verifyThumbnailHasExactWidthAndHeight(photo, 150, 150);
+		});
+
+		const verifyPhotoHasExactWidthAndHeight = (photo: Photo, width: number, height: number) => {
+			const size = PhotoBrowser.parseFullSize(photo);
+
+			expect(size.width).toBe(width);
+			expect(size.height).toBe(height);
+		};
+
+		const verifyThumbnailHasExactWidthAndHeight = (photo: Photo, width: number, height: number) => {
+			const size = PhotoBrowser.parseThumbnailSize(photo);
+
+			expect(size.width).toBe(width);
+			expect(size.height).toBe(height);
+		};
+	});
 });
 
-const randomPayload = (extra: Dictionary = {}) => ({
+const randomPhoto = (extra: Dictionary = {}) => ({
 	id: faker.datatype.number({ min: 1 }),
 	albumId: faker.datatype.number({ min: 1 }),
 	title: faker.lorem.sentence(),
-	url: faker.internet.url(),
-	thumbnailUrl: faker.internet.url(),
+	url: new URL(faker.internet.url()),
+	thumbnailUrl: new URL(faker.internet.url()),
 	...extra
 });

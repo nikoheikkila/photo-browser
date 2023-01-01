@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Photo } from '../domain/Photo';
 	import Link from './Link.svelte';
-	import { parseFullSize } from '../domain/Photo';
+	import PhotoBrowser from '../services/PhotoBrowser.js';
 
 	export let photo: Photo;
 
-	const size = parseFullSize(photo);
+	const size = PhotoBrowser.parseFullSize(photo);
 </script>
 
 <section class="drac-text-center">

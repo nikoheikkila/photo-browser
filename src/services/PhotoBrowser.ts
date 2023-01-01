@@ -1,5 +1,6 @@
 import type { PhotoGateway } from '../adapters/outbound/Gateway';
 import type { Photo } from '../domain/Photo';
+import { Dimensions } from '../domain/Schema';
 import { createPhoto } from '../domain/Photo';
 
 export default class PhotoBrowser {
@@ -41,5 +42,27 @@ export default class PhotoBrowser {
 		const response = await this.gateway.fetchPhotosByAlbumId(albumId, { _limit: this.limit });
 
 		return response.map(createPhoto);
+	}
+
+	public static parseFullSize(photo: Photo): Dimensions {
+		return this.parseSizeFromURL(photo.url, { width: 600, height: 600 });
+	}
+
+	public static parseThumbnailSize(photo: Photo): Dimensions {
+		return this.parseSizeFromURL(photo.thumbnailUrl, { width: 150, height: 150 });
+	}
+
+	private static parseSizeFromURL(url: URL, fallback: Dimensions): Dimensions {
+		const dimension = url.pathname.match(/^\/(\d+)\/(.+)$/)?.at(1);
+		const result = Number.parseInt(dimension || '', 10);
+
+		if (Number.isNaN(result) || result === 0) {
+			return fallback;
+		}
+
+		return Dimensions.parse({
+			width: result,
+			height: result
+		});
 	}
 }
