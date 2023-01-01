@@ -44,7 +44,7 @@ export class APIGateway implements PhotoGateway {
 			.catch(this.handleError);
 	}
 
-	private handleError(error: unknown): never {
+	private handleError(error: Error): never {
 		if (error instanceof AxiosError && error.response) {
 			const { status, data: message } = error.response;
 			throw new AxiosError(`HTTP ${status}: ${message}`);
