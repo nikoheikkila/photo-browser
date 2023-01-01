@@ -6,6 +6,10 @@ dotenv:
 tasks:
   install:
     desc: Install project dependencies
+    sources:
+      - package.json
+      - yarn.lock
+      - .yarnrc.yml
     cmds:
       - task: env
       - yarn install --immutable
@@ -19,11 +23,21 @@ tasks:
 
   format:
     desc: Format the codebase
+    sources:
+      - src/**/*.svelte
+      - src/**/*.html
+      - src/**/*.ts
+      - tests/**/*.ts
     cmds:
       - npx prettier --plugin-search-dir . --write .
 
   lint:
     desc: Lint the codebase
+    sources:
+      - src/**/*.svelte
+      - src/**/*.html
+      - src/**/*.ts
+      - tests/**/*.ts
     cmds:
       - npx prettier --plugin-search-dir . --check .
       - npx eslint .
@@ -39,8 +53,10 @@ tasks:
 
   build:
     desc: Build the application
-    deps:
-      - task: lint
+    sources:
+      - src/**/*.svelte
+      - src/**/*.html
+      - src/**/*.ts
     cmds:
       - npx vite build
     env:
@@ -55,6 +71,8 @@ tasks:
 
   test:unit:
     desc: Run unit tests
+    sources:
+      - src/**/*.ts
     cmds:
       - npx vitest run
     env:
@@ -70,9 +88,14 @@ tasks:
   test:e2e:
     desc: Run end-to-end tests
     deps:
+      - task: playwright
       - task: build
+    sources:
+      - src/**/*.svelte
+      - src/**/*.html
+      - src/**/*.ts
+      - tests/**/*.ts
     cmds:
-      - npx playwright install
       - npx playwright test
     env:
       NODE_ENV: production
@@ -82,3 +105,8 @@ tasks:
     deps:
       - task: test:unit
       - task: test:e2e
+
+  playwright:
+    internal: true
+    cmds:
+      - npx playwright install
