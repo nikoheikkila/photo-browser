@@ -2,12 +2,15 @@ import type { PhotoGateway } from '../adapters/outbound/Gateway';
 import type { Photo } from '../domain/Photo';
 import { Dimensions } from '../domain/Schema';
 import { createPhoto } from '../domain/Photo';
+import { groupByKey } from '../domain/Group';
+
+export type Albums = Dictionary<number, Photo[]>;
 
 export default class PhotoBrowser {
-	private readonly gateway: PhotoGateway<Dictionary>;
+	private readonly gateway: PhotoGateway;
 	private limit = 1000;
 
-	constructor(gateway: PhotoGateway<Dictionary>) {
+	constructor(gateway: PhotoGateway) {
 		this.gateway = gateway;
 	}
 
@@ -19,9 +22,9 @@ export default class PhotoBrowser {
 	}
 
 	public async loadPhotos(): Promise<Photo[]> {
-		const response = await this.gateway.fetchPhotos({ _limit: this.limit });
-
-		return response.map(createPhoto);
+		return this.gateway
+			.fetchPhotos({ _limit: this.limit })
+			.then((response) => response.map(createPhoto));
 	}
 
 	public async loadPhoto(id: number): Promise<Photo> {
@@ -29,9 +32,7 @@ export default class PhotoBrowser {
 			throw new Error('Photo ID must be greater than zero');
 		}
 
-		const response = await this.gateway.fetchPhoto(id);
-
-		return createPhoto(response);
+		return this.gateway.fetchPhoto(id).then(createPhoto);
 	}
 
 	public async loadFromAlbum(albumId: number): Promise<Photo[]> {
@@ -39,9 +40,13 @@ export default class PhotoBrowser {
 			throw new Error('Album ID must be greater than zero');
 		}
 
-		const response = await this.gateway.fetchPhotosByAlbumId(albumId, { _limit: this.limit });
+		return this.gateway
+			.fetchPhotosByAlbumId(albumId, { _limit: this.limit })
+			.then((response) => response.map(createPhoto));
+	}
 
-		return response.map(createPhoto);
+	public async groupPhotosByAlbum(): Promise<Albums> {
+		return this.loadPhotos().then(groupByKey<Photo>((photo) => photo.albumId));
 	}
 
 	public static parseFullSize(photo: Photo): Dimensions {

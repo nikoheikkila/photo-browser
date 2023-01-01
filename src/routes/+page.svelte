@@ -1,10 +1,10 @@
 <script lang="ts">
 	import PhotoGrid from '../components/PhotoGrid.svelte';
-	import type { GroupedPhotos } from '../adapters/inbound/Loaders';
+	import type { AllPhotos } from '../adapters/inbound/Loaders';
 
-	export let data: GroupedPhotos;
+	export let data: AllPhotos;
 
-	$: entries = Object.entries(data.photos);
+	$: entries = Object.entries(data?.albums ?? {});
 </script>
 
 {#each entries as [albumId, photos] (albumId)}

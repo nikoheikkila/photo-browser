@@ -1,9 +1,9 @@
 import type { HttpError, Load } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import PhotoBrowser from '../../services/PhotoBrowser';
+import type { Albums } from '../../services/PhotoBrowser';
 import type { RouteParams } from '../../routes/$types';
 import type { Photo } from '../../domain/Photo';
-import * as Group from '../../domain/Group';
 import { handleError } from '../outbound/Errors';
 import { APIGateway } from '../outbound/Gateway';
 import * as Environment from '../outbound/Environment';
@@ -13,16 +13,17 @@ export type AlbumPhotos = {
 	photos: Photo[];
 };
 
-export type GroupedPhotos = {
-	photos: Dictionary<number, Photo[]>;
+export type AllPhotos = {
+	albums: Albums;
 };
 
 export type SinglePhoto = {
 	photo: Photo;
 };
 
-type LoadPhotosRoute = Load<RouteParams, null, Dictionary, GroupedPhotos, '/'>;
-type LoadPhotoRoute = Load<
+type LoadAllPhotosRoute = Load<RouteParams, null, Dictionary, AllPhotos, '/'>;
+
+type LoadSinglePhotoRoute = Load<
 	RouteParams & { id: string },
 	null,
 	Dictionary,
@@ -41,20 +42,19 @@ type LoadAlbumRoute = Load<
 const browser = new PhotoBrowser(
 	new APIGateway(Environment.getPublicVariable('PUBLIC_PHOTO_API_URL'))
 );
-const groupByAlbum = Group.byKey((photo: Photo) => photo.albumId);
 
-export const loadPhotos: LoadPhotosRoute = async () => {
+export const loadPhotos: LoadAllPhotosRoute = async () => {
 	try {
-		const photos = await browser.withLimit(500).loadPhotos();
+		const albums = await browser.withLimit(500).groupPhotosByAlbum();
 
-		return { photos: groupByAlbum(photos) };
+		return { albums };
 	} catch (error: unknown) {
 		handleError(error);
-		throw internalError('Failed to load photos');
+		throw internalError('Could not load photos');
 	}
 };
 
-export const loadPhoto: LoadPhotoRoute = async ({ params }) => {
+export const loadPhoto: LoadSinglePhotoRoute = async ({ params }) => {
 	const id = parseNumericParameter(params.id, `Invalid photo ID '${params.id}' given`);
 
 	try {
@@ -63,7 +63,7 @@ export const loadPhoto: LoadPhotoRoute = async ({ params }) => {
 		return { photo };
 	} catch (error: unknown) {
 		handleError(error);
-		throw notFoundError(`Could not load photo with ID ${id}`);
+		throw notFoundError(`Could not find photo with ID ${id}`);
 	}
 };
 
@@ -76,14 +76,14 @@ export const loadAlbum: LoadAlbumRoute = async ({ params }) => {
 		return { albumId: id, photos };
 	} catch (error: unknown) {
 		handleError(error);
-		throw notFoundError(`Could not load album with ID ${id}`);
+		throw notFoundError(`Could not find album with ID ${id}`);
 	}
 };
 
 const parseNumericParameter = (numeric: string, errorMessage: string): number => {
 	const id = Number.parseInt(numeric, 10);
 
-	if (Number.isNaN(id) || id < 1) {
+	if (Number.isNaN(id)) {
 		throw badRequestError(errorMessage);
 	}
 

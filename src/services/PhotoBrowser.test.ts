@@ -3,6 +3,8 @@ import PhotoBrowser from './PhotoBrowser';
 import { faker } from '@faker-js/faker';
 import type { Photo } from '../domain/Photo';
 
+const { arrayContaining, objectContaining } = expect;
+
 describe('PhotoBrowser', () => {
 	let gateway: FakeGateway;
 	let browser: PhotoBrowser;
@@ -200,6 +202,52 @@ describe('PhotoBrowser', () => {
 		});
 	});
 
+	describe('grouping photos by album', () => {
+		test('groups a single photo by album ID', async () => {
+			const payload = randomPayload({ id: 1, albumId: 2 });
+			gateway.feedWith([payload]);
+
+			const albums = await browser.groupPhotosByAlbum();
+
+			expect(albums).toMatchObject({
+				[payload.albumId]: arrayContaining([
+					objectContaining({
+						id: payload.id
+					})
+				])
+			});
+		});
+
+		test('groups multiple photos by album ID', async () => {
+			const collection = [
+				randomPayload({
+					id: 1,
+					albumId: 5
+				}),
+				randomPayload({
+					id: 3,
+					albumId: 6
+				}),
+				randomPayload({
+					id: 2,
+					albumId: 5
+				}),
+				randomPayload({
+					id: 4,
+					albumId: 6
+				})
+			];
+			gateway.feedWith(collection);
+
+			const albums = await browser.groupPhotosByAlbum();
+
+			expect(albums).toMatchObject({
+				5: arrayContaining([objectContaining({ id: 1 }), objectContaining({ id: 2 })]),
+				6: arrayContaining([objectContaining({ id: 3 }), objectContaining({ id: 4 })])
+			});
+		});
+	});
+
 	describe('parsing photo dimensions', () => {
 		test('returns full width and height of the photo', () => {
 			const photo = randomPhoto({
@@ -247,10 +295,17 @@ describe('PhotoBrowser', () => {
 	});
 });
 
-const randomPhoto = (extra: Dictionary = {}) => ({
+const randomPayload = (extra: Dictionary = {}) => ({
 	id: faker.datatype.number({ min: 1 }),
 	albumId: faker.datatype.number({ min: 1 }),
 	title: faker.lorem.sentence(),
+	url: faker.internet.url().concat('/'),
+	thumbnailUrl: faker.internet.url().concat('/'),
+	...extra
+});
+
+const randomPhoto = (extra: Dictionary = {}): Photo => ({
+	...randomPayload(),
 	url: new URL(faker.internet.url()),
 	thumbnailUrl: new URL(faker.internet.url()),
 	...extra

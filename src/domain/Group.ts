@@ -1,7 +1,7 @@
 type Key = string | number | symbol;
 type Getter<T> = (item: T) => Key;
 
-export const byKey =
+export const groupByKey =
 	<T>(key: Getter<T>) =>
 	(collection: T[]) =>
 		collection.reduce(reducer(key), {});
