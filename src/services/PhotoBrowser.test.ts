@@ -1,11 +1,11 @@
-import { FakeGateway } from '../adapters/outbound/Gateway';
-import PhotoBrowser from './PhotoBrowser';
 import { faker } from '@faker-js/faker';
+import { FakeGateway } from '../adapters/outbound/Gateway';
 import type { Photo } from '../domain/Photo';
+import PhotoBrowser from './PhotoBrowser';
 
 const { arrayContaining, objectContaining } = expect;
 
-describe('PhotoBrowser', () => {
+describe('Photo Browser', () => {
 	let gateway: FakeGateway;
 	let browser: PhotoBrowser;
 
@@ -48,11 +48,11 @@ describe('PhotoBrowser', () => {
 			});
 		});
 
-		test('throws error on invalid limit', () => {
+		test('throws error with zero as limit', () => {
 			expect(() => browser.withLimit(0)).toThrowError('Photo limit must be greater than zero');
 		});
 
-		test('throws error on null server response', async () => {
+		test('throws error with null server response', async () => {
 			gateway.feedWith([{}]);
 
 			expect(() => browser.loadPhotos()).rejects.toThrowError(
@@ -60,7 +60,7 @@ describe('PhotoBrowser', () => {
 			);
 		});
 
-		test('throws error on malformed server response', async () => {
+		test('throws error with malformed server response', async () => {
 			gateway.feedWith([{ key: faker.datatype.string() }]);
 
 			expect(() => browser.loadPhotos()).rejects.toThrowError(
@@ -68,7 +68,7 @@ describe('PhotoBrowser', () => {
 			);
 		});
 
-		test('throws error on server error', async () => {
+		test('throws error with server error', async () => {
 			const expectedError = 'Could not load photos';
 			gateway.setError(new Error(expectedError));
 
@@ -77,7 +77,7 @@ describe('PhotoBrowser', () => {
 	});
 
 	describe('loading a single photo', () => {
-		test('returns a valid single entity', async () => {
+		test('returns a valid single photo', async () => {
 			const id = faker.datatype.number({ min: 1 });
 
 			const photo = await browser.loadPhoto(id);
@@ -93,7 +93,7 @@ describe('PhotoBrowser', () => {
 			expect(() => browser.loadPhoto(0)).rejects.toThrowError('Photo ID must be greater than zero');
 		});
 
-		test('throws error on invalid album ID', async () => {
+		test('throws error with album ID less than 1', async () => {
 			gateway.feedWith([
 				randomPhoto({
 					id: 1,
@@ -104,7 +104,7 @@ describe('PhotoBrowser', () => {
 			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Album ID must be greater than zero/);
 		});
 
-		test('throws error on invalid title', async () => {
+		test('throws error with empty title', async () => {
 			gateway.feedWith([
 				randomPhoto({
 					id: 1,
@@ -115,7 +115,7 @@ describe('PhotoBrowser', () => {
 			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Title must be a non-empty string/);
 		});
 
-		test('throws error on invalid photo URL', async () => {
+		test('throws error with invalid photo URL', async () => {
 			gateway.feedWith([
 				randomPhoto({
 					id: 1,
@@ -126,7 +126,7 @@ describe('PhotoBrowser', () => {
 			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Photo URL must be valid/);
 		});
 
-		test('throws error on invalid thumbnail URL', async () => {
+		test('throws error with invalid thumbnail URL', async () => {
 			gateway.feedWith([
 				randomPhoto({
 					id: 1,
@@ -137,7 +137,7 @@ describe('PhotoBrowser', () => {
 			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Thumbnail URL must be valid/);
 		});
 
-		test('throws error on null server response', async () => {
+		test('throws error with empty server response', async () => {
 			gateway.feedWith([{}]);
 
 			expect(() => browser.loadPhoto(1)).rejects.toThrowError(
@@ -145,7 +145,7 @@ describe('PhotoBrowser', () => {
 			);
 		});
 
-		test('throws error on malformed server response', async () => {
+		test('throws error with non-schematic server response', async () => {
 			gateway.feedWith([{ key: faker.datatype.string() }]);
 
 			expect(() => browser.loadPhoto(1)).rejects.toThrowError(
@@ -153,7 +153,7 @@ describe('PhotoBrowser', () => {
 			);
 		});
 
-		test('throws error on server error', async () => {
+		test('throws error with server error', async () => {
 			const expectedError = 'Could not load photo with ID 1';
 			gateway.setError(new Error(expectedError));
 
@@ -186,7 +186,7 @@ describe('PhotoBrowser', () => {
 			);
 		});
 
-		test('throws error on null server response', async () => {
+		test('throws error with empty server response', async () => {
 			gateway.feedWith([{}]);
 
 			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
@@ -194,7 +194,7 @@ describe('PhotoBrowser', () => {
 			);
 		});
 
-		test('throws error on malformed server response', async () => {
+		test('throws error with non-schematic server response', async () => {
 			gateway.feedWith([{ key: faker.datatype.string() }]);
 
 			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
@@ -202,7 +202,7 @@ describe('PhotoBrowser', () => {
 			);
 		});
 
-		test('throws error on server error', async () => {
+		test('throws error with server error', async () => {
 			const expectedError = 'Could not load album with ID 1';
 			gateway.setError(new Error(expectedError));
 
@@ -210,8 +210,8 @@ describe('PhotoBrowser', () => {
 		});
 	});
 
-	describe('grouping photos by album', () => {
-		test('groups a single photo by album ID', async () => {
+	describe('grouping photos into albums', () => {
+		test('returns a single group having a single photo', async () => {
 			const payload = randomPayload({ id: 1, albumId: 2 });
 			gateway.feedWith([payload]);
 
@@ -226,7 +226,36 @@ describe('PhotoBrowser', () => {
 			});
 		});
 
-		test('groups multiple photos by album ID', async () => {
+		test('returns multiple groups having a single photo', async () => {
+			const collection = [
+				randomPayload({
+					id: 1,
+					albumId: 5
+				}),
+				randomPayload({
+					id: 3,
+					albumId: 6
+				}),
+				randomPayload({
+					id: 2,
+					albumId: 5
+				}),
+				randomPayload({
+					id: 4,
+					albumId: 6
+				})
+			];
+			gateway.feedWith(collection);
+
+			const albums = await browser.groupPhotosByAlbum();
+
+			expect(albums).toMatchObject({
+				5: arrayContaining([objectContaining({ id: 1 }), objectContaining({ id: 2 })]),
+				6: arrayContaining([objectContaining({ id: 3 }), objectContaining({ id: 4 })])
+			});
+		});
+
+		test('returns multiple groups having multiple photos', async () => {
 			const collection = [
 				randomPayload({
 					id: 1,
@@ -256,8 +285,8 @@ describe('PhotoBrowser', () => {
 		});
 	});
 
-	describe('parsing photo dimensions', () => {
-		test('returns full width and height of the photo', () => {
+	describe('parsing width and height of a photo', () => {
+		test('returns width and height of a photo', () => {
 			const photo = randomPhoto({
 				url: new URL('https://via.placeholder.com/640/92c952'),
 				thumbnailUrl: new URL('https://via.placeholder.com/128/92c952')
@@ -267,7 +296,7 @@ describe('PhotoBrowser', () => {
 			verifyThumbnailHasExactWidthAndHeight(photo, 128, 128);
 		});
 
-		test('returns default width and height for invalid photo', () => {
+		test('returns default width and height for photo with invalid URL', () => {
 			const photo = randomPhoto({
 				url: new URL('https://via.placeholder.com/92c952'),
 				thumbnailUrl: new URL('https://via.placeholder.com/92c952')
@@ -277,7 +306,7 @@ describe('PhotoBrowser', () => {
 			verifyThumbnailHasExactWidthAndHeight(photo, 150, 150);
 		});
 
-		test('returns default width and height for zero dimension', () => {
+		test('returns default width and height for URl with zero dimension', () => {
 			const photo = randomPhoto({
 				url: new URL('https://via.placeholder.com/0/92c952'),
 				thumbnailUrl: new URL('https://via.placeholder.com/0/92c952')
