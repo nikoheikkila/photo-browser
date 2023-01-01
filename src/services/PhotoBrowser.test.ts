@@ -55,13 +55,17 @@ describe('PhotoBrowser', () => {
 		test('throws error on null server response', async () => {
 			gateway.feedWith([{}]);
 
-			expect(() => browser.loadPhotos()).rejects.toThrowError('Received malformed JSON response');
+			expect(() => browser.loadPhotos()).rejects.toThrowError(
+				/Can not parse photo from invalid data/
+			);
 		});
 
 		test('throws error on malformed server response', async () => {
 			gateway.feedWith([{ key: faker.datatype.string() }]);
 
-			expect(() => browser.loadPhotos()).rejects.toThrowError('Received malformed JSON response');
+			expect(() => browser.loadPhotos()).rejects.toThrowError(
+				/Can not parse photo from invalid data/
+			);
 		});
 
 		test('throws error on server error', async () => {
@@ -136,13 +140,17 @@ describe('PhotoBrowser', () => {
 		test('throws error on null server response', async () => {
 			gateway.feedWith([{}]);
 
-			expect(() => browser.loadPhoto(1)).rejects.toThrowError('Received malformed JSON response');
+			expect(() => browser.loadPhoto(1)).rejects.toThrowError(
+				/Can not parse photo from invalid data/
+			);
 		});
 
 		test('throws error on malformed server response', async () => {
 			gateway.feedWith([{ key: faker.datatype.string() }]);
 
-			expect(() => browser.loadPhoto(1)).rejects.toThrowError('Received malformed JSON response');
+			expect(() => browser.loadPhoto(1)).rejects.toThrowError(
+				/Can not parse photo from invalid data/
+			);
 		});
 
 		test('throws error on server error', async () => {
@@ -182,7 +190,7 @@ describe('PhotoBrowser', () => {
 			gateway.feedWith([{}]);
 
 			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
-				'Received malformed JSON response'
+				/Can not parse photo from invalid data/
 			);
 		});
 
@@ -190,7 +198,7 @@ describe('PhotoBrowser', () => {
 			gateway.feedWith([{ key: faker.datatype.string() }]);
 
 			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
-				'Received malformed JSON response'
+				/Can not parse photo from invalid data/
 			);
 		});
 

@@ -1,5 +1,6 @@
 import * as z from 'zod';
 import * as Schema from './Schema';
+
 export const Photo = z.object({
 	id: Schema.positiveInteger('Photo ID must be greater than zero'),
 	albumId: Schema.positiveInteger('Album ID must be greater than zero'),
@@ -9,11 +10,12 @@ export const Photo = z.object({
 });
 
 export type Photo = z.infer<typeof Photo>;
+
 export function createPhoto(data: Dictionary): Photo {
 	const result = Photo.safeParse(data);
 
 	if (!result.success) {
-		throw new Error(`Received malformed JSON response: ${result.error.message}`);
+		throw new Error(`Can not parse photo from invalid data: ${result.error.message}`);
 	}
 
 	return result.data;
