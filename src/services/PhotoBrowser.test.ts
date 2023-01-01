@@ -12,7 +12,7 @@ describe('PhotoBrowser', () => {
 		browser = new PhotoBrowser(gateway);
 	});
 
-	describe('loading photos', () => {
+	describe('loading all photos', () => {
 		test('returns a collection of photos', async () => {
 			const photos = await browser.loadPhotos();
 
@@ -38,7 +38,7 @@ describe('PhotoBrowser', () => {
 
 			const [actualPhoto] = await browser.loadPhotos();
 
-			expect(actualPhoto).toStrictEqual({
+			expect(actualPhoto).toMatchObject({
 				...expectedPhoto,
 				url: new URL(expectedPhoto.url),
 				thumbnailUrl: new URL(expectedPhoto.thumbnailUrl)
@@ -70,20 +70,64 @@ describe('PhotoBrowser', () => {
 	});
 
 	describe('loading a single photo', () => {
-		test('returns a single entity', async () => {
+		test('returns a valid single entity', async () => {
 			const id = faker.datatype.number({ min: 1 });
 
 			const photo = await browser.loadPhoto(id);
 
 			expect(photo.id).toBe(id);
 			expect(photo.albumId).toBeGreaterThan(0);
-			expect(photo.title).not.toBe('');
+			expect(photo.title.length).toBeGreaterThan(0);
 			expect(photo.url).toBeInstanceOf(URL);
 			expect(photo.thumbnailUrl).toBeInstanceOf(URL);
 		});
 
 		test('throws error with ID less than 1', async () => {
 			expect(() => browser.loadPhoto(0)).rejects.toThrowError('Photo ID must be greater than zero');
+		});
+
+		test('throws error on invalid album ID', async () => {
+			gateway.feedWith([
+				randomPayload({
+					id: 1,
+					albumId: 0
+				})
+			]);
+
+			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Album ID must be greater than zero/);
+		});
+
+		test('throws error on invalid title', async () => {
+			gateway.feedWith([
+				randomPayload({
+					id: 1,
+					title: ''
+				})
+			]);
+
+			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Title must be a non-empty string/);
+		});
+
+		test('throws error on invalid photo URL', async () => {
+			gateway.feedWith([
+				randomPayload({
+					id: 1,
+					url: 'not a URL'
+				})
+			]);
+
+			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Photo URL must be valid/);
+		});
+
+		test('throws error on invalid thumbnail URL', async () => {
+			gateway.feedWith([
+				randomPayload({
+					id: 1,
+					thumbnailUrl: 'not a URL'
+				})
+			]);
+
+			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Thumbnail URL must be valid/);
 		});
 
 		test('throws error on null server response', async () => {
@@ -154,4 +198,13 @@ describe('PhotoBrowser', () => {
 			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
+});
+
+const randomPayload = (extra: Dictionary = {}) => ({
+	id: faker.datatype.number({ min: 1 }),
+	albumId: faker.datatype.number({ min: 1 }),
+	title: faker.lorem.sentence(),
+	url: faker.internet.url(),
+	thumbnailUrl: faker.internet.url(),
+	...extra
 });

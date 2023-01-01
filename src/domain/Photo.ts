@@ -1,41 +1,39 @@
 import * as z from 'zod';
-import { handleError } from '../adapters/outbound/Errors';
 
-const positiveInteger = (defaultValue: number) =>
-	z.number().int().min(1).optional().default(defaultValue);
-const nonEmptyString = (defaultValue = '') => z.string().min(1).optional().default(defaultValue);
+const positiveInteger = (error: string) => z.number().int().min(1, { message: error });
+const nonEmptyString = (error: string) => z.string().min(1, { message: error });
 
-const validURL = () =>
+const validURL = (error: string) =>
 	z
 		.string()
-		.url()
+		.url({ message: error })
 		.transform((url) => new URL(url));
 
-export const schema = z.object({
-	id: positiveInteger(1),
-	albumId: positiveInteger(1),
-	title: nonEmptyString('Title'),
-	url: validURL(),
-	thumbnailUrl: validURL()
+const Photo = z.object({
+	id: positiveInteger('Photo ID must be greater than zero'),
+	albumId: positiveInteger('Album ID must be greater than zero'),
+	title: nonEmptyString('Title must be a non-empty string'),
+	url: validURL('Photo URL must be valid'),
+	thumbnailUrl: validURL('Thumbnail URL must be valid')
 });
 
-export type Photo = z.infer<typeof schema>;
+const Dimensions = z.object({
+	width: positiveInteger('Width must be greater than zero'),
+	height: positiveInteger('Height must be greater than zero')
+});
 
-export function createPhoto(args: Record<string, unknown>): Photo {
-	try {
-		return schema.parse(args);
-	} catch (error: unknown) {
-		handleError(error);
+export type Photo = z.infer<typeof Photo>;
+export type Dimensions = z.infer<typeof Dimensions>;
 
-		if (error instanceof z.ZodError) {
-			throw new Error('Received malformed JSON response');
-		}
+export function createPhoto(data: Dictionary): Photo {
+	const result = Photo.safeParse(data);
 
-		throw error;
+	if (!result.success) {
+		throw new Error(`Received malformed JSON response: ${result.error.message}`);
 	}
-}
 
-type Dimensions = { width: number; height: number };
+	return result.data;
+}
 
 export const parseFullSize = (photo: Photo) =>
 	parseSizeFromURL(photo.url, { width: 600, height: 600 });
@@ -51,8 +49,8 @@ const parseSizeFromURL = (url: URL, fallback: Dimensions): Dimensions => {
 		return fallback;
 	}
 
-	return {
+	return Dimensions.parse({
 		width: result,
 		height: result
-	};
+	});
 };
