@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Photo } from '../domain/Photo';
-	import Link from './Link.svelte';
 	import PhotoBrowser from '../services/PhotoBrowser.js';
+	import Link from './Link.svelte';
 
 	export let photo: Photo;
 
@@ -14,7 +14,7 @@
 	</section>
 	<figure class="drac-box centered">
 		<img src={photo.url.href} alt="Caption: {photo.title}" loading="lazy" {...size} />
-		<figcaption class="drac-text drac-text-pink drac-line-height-2xl">
+		<figcaption role="caption" class="drac-text drac-text-pink drac-line-height-2xl">
 			{photo.title}
 		</figcaption>
 	</figure>
