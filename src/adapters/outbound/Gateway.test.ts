@@ -15,6 +15,14 @@ describe('API Gateway', () => {
 		gateway = new APIGateway(baseURL);
 	});
 
+	describe('validation', () => {
+		test('throws error on missing base URL', () => {
+			expect(() => new APIGateway()).toThrowError(/Invalid base URL 'undefined' given/);
+			expect(() => new APIGateway('')).toThrowError(/Invalid base URL '' given/);
+			expect(() => new APIGateway('abc')).toThrowError(/Invalid base URL 'abc' given/);
+		});
+	});
+
 	describe('fetching all photos', () => {
 		let route: Interceptor;
 

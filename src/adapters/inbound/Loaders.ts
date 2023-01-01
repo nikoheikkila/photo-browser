@@ -6,7 +6,7 @@ import type { RouteParams } from '../../routes/$types';
 import type { Photo } from '../../domain/Photo';
 import { handleError } from '../outbound/Errors';
 import { APIGateway } from '../outbound/Gateway';
-import * as Environment from '../outbound/Environment';
+import { PUBLIC_PHOTO_API_URL } from '$env/static/public';
 
 export type AlbumPhotos = {
 	albumId: number;
@@ -39,9 +39,7 @@ type LoadAlbumRoute = Load<
 	'/album/[id]'
 >;
 
-const browser = new PhotoBrowser(
-	new APIGateway(Environment.getPublicVariable('PUBLIC_PHOTO_API_URL'))
-);
+const browser = new PhotoBrowser(new APIGateway(PUBLIC_PHOTO_API_URL));
 
 export const loadPhotos: LoadAllPhotosRoute = async () => {
 	try {

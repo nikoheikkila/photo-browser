@@ -17,9 +17,9 @@ export interface PhotoGateway<T = Dictionary> {
 
 export class APIGateway implements PhotoGateway {
 	private readonly client: AxiosInstance;
-	constructor(baseURL: string) {
+	constructor(baseURL?: string) {
 		this.client = axios.create({
-			baseURL
+			baseURL: this.validateBaseURL(baseURL)
 		});
 	}
 
@@ -51,6 +51,14 @@ export class APIGateway implements PhotoGateway {
 		}
 
 		throw error;
+	}
+
+	private validateBaseURL(baseURL: string | undefined): string {
+		try {
+			return new URL(baseURL || '').href;
+		} catch (error: unknown) {
+			throw new Error(`Invalid base URL '${baseURL}' given`);
+		}
 	}
 }
 
