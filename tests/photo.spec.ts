@@ -7,6 +7,10 @@ test.describe('Single photo page', () => {
 		await expect(page.getByRole('main')).toBeVisible();
 	});
 
+	test('page has an accessible title', async ({ page }) => {
+		await expect(page).toHaveTitle(/Photo - \w+/);
+	});
+
 	test('shows details for a single photo', async ({ page }) => {
 		const figure = page.getByRole('figure');
 		await expect(figure).toBeVisible();

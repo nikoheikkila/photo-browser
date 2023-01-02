@@ -7,6 +7,10 @@
 	$: entries = Object.entries(data?.albums ?? {});
 </script>
 
+<svelte:head>
+	<title>Photo Browser | Home</title>
+</svelte:head>
+
 {#each entries as [albumId, photos] (albumId)}
 	<PhotoGrid albumId={Number(albumId)} bind:photos />
 {/each}

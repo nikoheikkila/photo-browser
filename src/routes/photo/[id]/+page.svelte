@@ -7,4 +7,8 @@
 	$: photo = data.photo;
 </script>
 
+<svelte:head>
+	<title>Photo Browser | Photo - {photo.title}</title>
+</svelte:head>
+
 <FullPhoto {photo} />

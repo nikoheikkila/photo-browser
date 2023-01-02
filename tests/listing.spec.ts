@@ -7,6 +7,10 @@ test.describe('Photo listing', () => {
 		await expect(page.getByRole('main')).toBeVisible();
 	});
 
+	test('page has an accessible title', async ({ page }) => {
+		await expect(page).toHaveTitle(/Home/);
+	});
+
 	test('page lists all the photos with accessible screen reader texts', async ({ page }) => {
 		const allPhotos = page.getByRole('img');
 		const accessiblePhotos = page.getByAltText(captionPattern);

@@ -8,6 +8,10 @@ test.describe('Albums page', () => {
 		await expect(page.getByRole('main')).toBeVisible();
 	});
 
+	test('page has an accessible title', async ({ page }) => {
+		await expect(page).toHaveTitle(/Photos for album \d+/);
+	});
+
 	test('shows photos belonging to a single album', async ({ page }) => {
 		const title = page.getByRole('heading', { name: 'Photos from album 1' });
 		await expect(title).toBeVisible();

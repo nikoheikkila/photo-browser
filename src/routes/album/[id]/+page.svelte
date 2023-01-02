@@ -15,6 +15,10 @@
 	$: onFirstAlbum = albumId === 1;
 </script>
 
+<svelte:head>
+	<title>Photo Browser | Photos for album {albumId}</title>
+</svelte:head>
+
 {#if isEmptyAlbum}
 	<Warning
 		title="You stumbled upon an empty album"
