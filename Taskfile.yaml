@@ -103,6 +103,7 @@ tasks:
   test:
     desc: Run the full acceptance test suite
     deps:
+      - task: lint
       - task: test:unit
       - task: test:e2e
 
