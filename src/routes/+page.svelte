@@ -1,8 +1,8 @@
 <script lang="ts">
 	import PhotoGrid from '../components/PhotoGrid.svelte';
-	import type { AllPhotos } from '../adapters/inbound/Loaders';
+	import type { PageData } from './$types';
 
-	export let data: AllPhotos;
+	export let data: PageData;
 
 	$: entries = Object.entries(data?.albums ?? {});
 </script>

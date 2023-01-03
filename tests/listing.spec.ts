@@ -9,7 +9,7 @@ test.describe('Photo listing', () => {
 
 	test('document has specified English as language', async ({ page }) => {
 		await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-	})
+	});
 
 	test('page has an accessible title', async ({ page }) => {
 		await expect(page).toHaveTitle(/Home/);

@@ -1,13 +1,10 @@
 <script lang="ts">
 	import PhotoGrid from '../../../components/PhotoGrid.svelte';
-	import type { AlbumPhotos } from '../../../adapters/inbound/Loaders';
 	import Warning from '../../../components/Warning.svelte';
 	import Link from '../../../components/Link.svelte';
+	import type { PageData } from './$types';
 
-	export let data: AlbumPhotos = {
-		albumId: 1,
-		photos: []
-	};
+	export let data: PageData;
 
 	$: photos = data.photos;
 	$: isEmptyAlbum = photos.length === 0;
