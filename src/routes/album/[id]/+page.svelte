@@ -1,7 +1,7 @@
 <script lang="ts">
-	import PhotoGrid from '../../../components/PhotoGrid.svelte';
-	import Warning from '../../../components/Warning.svelte';
-	import Link from '../../../components/Link.svelte';
+	import PhotoGrid from '$components/PhotoGrid.svelte';
+	import Warning from '$components/Warning.svelte';
+	import Link from '$components/Link.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

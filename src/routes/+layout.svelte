@@ -1,8 +1,9 @@
 <script lang="ts">
 	import 'dracula-ui/styles/dracula-ui.css';
-	import Navigation from '../components/Navigation.svelte';
-	import Title from '../components/Title.svelte';
-	import Footer from '../components/Footer.svelte';
+
+	import Navigation from '$components/Navigation.svelte';
+	import Title from '$components/Title.svelte';
+	import Footer from '$components/Footer.svelte';
 </script>
 
 <main class="drac-box drac-w-full">

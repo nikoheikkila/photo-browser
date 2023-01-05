@@ -11,7 +11,10 @@ const config = {
 		adapter: netlify({
 			edge: false,
 			split: true
-		})
+		}),
+		alias: {
+			'$components/*': './src/components/*'
+		}
 	}
 };
 

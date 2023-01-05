@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FullPhoto from '../../../components/FullPhoto.svelte';
+	import FullPhoto from '$components/FullPhoto.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

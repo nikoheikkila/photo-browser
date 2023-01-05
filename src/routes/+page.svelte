@@ -1,5 +1,5 @@
 <script lang="ts">
-	import PhotoGrid from '../components/PhotoGrid.svelte';
+	import PhotoGrid from '$components/PhotoGrid.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
