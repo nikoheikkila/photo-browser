@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
-import { FakeGateway } from '../adapters/Gateway';
-import type { Photo } from '../domain/Photo';
-import PhotoBrowser from './PhotoBrowser';
+import PhotoBrowser from '../PhotoBrowser';
+import { FakeGateway, randomPayload, randomPhoto } from './';
 
 const { arrayContaining, objectContaining } = expect;
 
@@ -284,66 +283,4 @@ describe('Photo Browser', () => {
 			});
 		});
 	});
-
-	describe('parsing width and height of a photo', () => {
-		test('returns width and height of a photo', () => {
-			const photo = randomPhoto({
-				url: new URL('https://via.placeholder.com/640/92c952'),
-				thumbnailUrl: new URL('https://via.placeholder.com/128/92c952')
-			});
-
-			verifyPhotoHasExactWidthAndHeight(photo, 640, 640);
-			verifyThumbnailHasExactWidthAndHeight(photo, 128, 128);
-		});
-
-		test('returns default width and height for photo with invalid URL', () => {
-			const photo = randomPhoto({
-				url: new URL('https://via.placeholder.com/92c952'),
-				thumbnailUrl: new URL('https://via.placeholder.com/92c952')
-			});
-
-			verifyPhotoHasExactWidthAndHeight(photo, 600, 600);
-			verifyThumbnailHasExactWidthAndHeight(photo, 150, 150);
-		});
-
-		test('returns default width and height for URl with zero dimension', () => {
-			const photo = randomPhoto({
-				url: new URL('https://via.placeholder.com/0/92c952'),
-				thumbnailUrl: new URL('https://via.placeholder.com/0/92c952')
-			});
-
-			verifyPhotoHasExactWidthAndHeight(photo, 600, 600);
-			verifyThumbnailHasExactWidthAndHeight(photo, 150, 150);
-		});
-
-		const verifyPhotoHasExactWidthAndHeight = (photo: Photo, width: number, height: number) => {
-			const size = PhotoBrowser.parseFullSize(photo);
-
-			expect(size.width).toBe(width);
-			expect(size.height).toBe(height);
-		};
-
-		const verifyThumbnailHasExactWidthAndHeight = (photo: Photo, width: number, height: number) => {
-			const size = PhotoBrowser.parseThumbnailSize(photo);
-
-			expect(size.width).toBe(width);
-			expect(size.height).toBe(height);
-		};
-	});
-});
-
-const randomPayload = (extra: Dictionary = {}) => ({
-	id: faker.datatype.number({ min: 1 }),
-	albumId: faker.datatype.number({ min: 1 }),
-	title: faker.lorem.sentence(),
-	url: faker.internet.url().concat('/'),
-	thumbnailUrl: faker.internet.url().concat('/'),
-	...extra
-});
-
-const randomPhoto = (extra: Dictionary = {}): Photo => ({
-	...randomPayload(),
-	url: new URL(faker.internet.url()),
-	thumbnailUrl: new URL(faker.internet.url()),
-	...extra
 });

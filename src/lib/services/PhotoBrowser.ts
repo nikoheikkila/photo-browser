@@ -1,6 +1,5 @@
 import type { PhotoGateway } from '../adapters/Gateway';
 import type { Photo } from '../domain/Photo';
-import { Dimensions } from '../domain/Schema';
 import { createPhoto } from '../domain/Photo';
 import { groupByKey } from '../domain/Group';
 
@@ -47,27 +46,5 @@ export default class PhotoBrowser {
 
 	public async groupPhotosByAlbum(): Promise<Albums> {
 		return this.loadPhotos().then(groupByKey<Photo>((photo) => photo.albumId));
-	}
-
-	public static parseFullSize(photo: Photo): Dimensions {
-		return this.parseSizeFromURL(photo.url, { width: 600, height: 600 });
-	}
-
-	public static parseThumbnailSize(photo: Photo): Dimensions {
-		return this.parseSizeFromURL(photo.thumbnailUrl, { width: 150, height: 150 });
-	}
-
-	private static parseSizeFromURL(url: URL, fallback: Dimensions): Dimensions {
-		const dimension = url.pathname.match(/^\/(\d+)\/(.+)$/)?.at(1);
-		const result = Number.parseInt(dimension || '', 10);
-
-		if (Number.isNaN(result) || result === 0) {
-			return fallback;
-		}
-
-		return Dimensions.parse({
-			width: result,
-			height: result
-		});
 	}
 }

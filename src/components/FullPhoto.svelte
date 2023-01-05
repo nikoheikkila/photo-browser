@@ -1,11 +1,11 @@
 <script lang="ts">
 	import type { Photo } from '$lib/domain/Photo';
-	import PhotoBrowser from '$lib/services/PhotoBrowser';
 	import Link from './Link.svelte';
+	import { PhotoCalculator } from '$lib/services/PhotoCalculator';
 
 	export let photo: Photo;
 
-	const size = PhotoBrowser.parseFullSize(photo);
+	const size = new PhotoCalculator(photo).parseFullSize();
 </script>
 
 <section class="drac-text-center">
