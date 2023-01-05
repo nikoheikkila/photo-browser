@@ -1,4 +1,4 @@
-import type { PhotoGateway } from '../adapters/outbound/Gateway';
+import type { PhotoGateway } from '../adapters/Gateway';
 import type { Photo } from '../domain/Photo';
 import { Dimensions } from '../domain/Schema';
 import { createPhoto } from '../domain/Photo';

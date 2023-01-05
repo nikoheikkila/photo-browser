@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { FakeGateway } from '../adapters/outbound/Gateway';
+import { FakeGateway } from '../adapters/Gateway';
 import type { Photo } from '../domain/Photo';
 import PhotoBrowser from './PhotoBrowser';
 

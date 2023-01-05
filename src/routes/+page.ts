@@ -1,6 +1,6 @@
 import type { HttpError } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
-import { handleError } from '$lib/adapters/outbound/Errors';
+import { handleError } from '$lib/adapters/Errors';
 import type { Albums } from '$lib/services/PhotoBrowser';
 import type { PageLoad } from './$types';
 import { browser } from '$lib/services';

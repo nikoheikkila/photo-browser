@@ -1,4 +1,4 @@
-import { gateway } from '../adapters/outbound';
+import { gateway } from '../adapters';
 import PhotoBrowser from './PhotoBrowser';
 
 /**

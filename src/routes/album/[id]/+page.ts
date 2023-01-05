@@ -1,4 +1,4 @@
-import { handleError } from '$lib/adapters/outbound/Errors';
+import { handleError } from '$lib/adapters/Errors';
 import type { Photo } from '$lib/domain/Photo';
 import type { PageLoad } from './$types';
 import type { HttpError } from '@sveltejs/kit';

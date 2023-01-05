@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit';
 import type { HttpError } from '@sveltejs/kit';
-import { handleError } from '$lib/adapters/outbound/Errors';
+import { handleError } from '$lib/adapters/Errors';
 import type { Photo } from '$lib/domain/Photo';
 import type { PageLoad } from './$types';
 import { parseNumericParameter } from '../../helpers';
