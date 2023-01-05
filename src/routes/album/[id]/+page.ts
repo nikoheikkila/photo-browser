@@ -1,9 +1,11 @@
 import { handleError } from '$lib/adapters/outbound/Errors';
 import type { Photo } from '$lib/domain/Photo';
 import type { PageLoad } from './$types';
+import type { HttpError } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
-import { parseNumericParameter } from '../../../helpers';
+import { parseNumericParameter } from '../../helpers';
 import { browser } from '$lib/services';
+import { HttpStatusCode } from 'axios';
 
 type Response = {
 	albumId: number;
@@ -11,14 +13,25 @@ type Response = {
 };
 
 export const load: PageLoad<Response> = async ({ params }) => {
-	const id = parseNumericParameter(params.id, `Invalid album ID '${params.id}' given`);
+	const albumId = parseNumericParameter(params.id);
+
+	if (Number.isNaN(albumId)) {
+		throw invalidAlbum(params.id);
+	}
 
 	try {
-		const photos = await browser.withLimit(50).loadFromAlbum(id);
-
-		return { albumId: id, photos };
-	} catch (err: unknown) {
-		handleError(err);
-		throw error(404, `Could not find album with ID ${id}`);
+		return {
+			albumId,
+			photos: await browser.withLimit(50).loadFromAlbum(albumId)
+		};
+	} catch (error: unknown) {
+		handleError(error);
+		throw notFoundAlbum(albumId);
 	}
 };
+
+const invalidAlbum = (id: string): HttpError =>
+	error(HttpStatusCode.BadRequest, `Invalid album ID '${id}' given`);
+
+const notFoundAlbum = (id: number): HttpError =>
+	error(HttpStatusCode.NotFound, `Could not find album with ID ${id}`);

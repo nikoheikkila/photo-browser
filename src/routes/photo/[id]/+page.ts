@@ -1,23 +1,35 @@
 import { error } from '@sveltejs/kit';
-import { handleError } from '../../../lib/adapters/outbound/Errors';
-import type { Photo } from '../../../lib/domain/Photo';
+import type { HttpError } from '@sveltejs/kit';
+import { handleError } from '$lib/adapters/outbound/Errors';
+import type { Photo } from '$lib/domain/Photo';
 import type { PageLoad } from './$types';
-import { parseNumericParameter } from '../../../helpers';
+import { parseNumericParameter } from '../../helpers';
 import { browser } from '$lib/services';
+import { HttpStatusCode } from 'axios';
 
-type SinglePhoto = {
+type Response = {
 	photo: Photo;
 };
 
-export const load: PageLoad<SinglePhoto> = async ({ params }) => {
-	const id = parseNumericParameter(params.id, `Invalid photo ID '${params.id}' given`);
+export const load: PageLoad<Response> = async ({ params }) => {
+	const id = parseNumericParameter(params.id);
+
+	if (Number.isNaN(id)) {
+		throw invalidPhoto(params.id);
+	}
 
 	try {
-		const photo = await browser.loadPhoto(id);
-
-		return { photo };
+		return {
+			photo: await browser.loadPhoto(id)
+		};
 	} catch (err: unknown) {
 		handleError(err);
-		throw error(404, `Could not find photo with ID ${id}`);
+		throw notFoundPhoto(id);
 	}
 };
+
+const notFoundPhoto = (id: number): HttpError =>
+	error(HttpStatusCode.NotFound, `Could not find photo with ID ${id}`);
+
+const invalidPhoto = (id: string): HttpError =>
+	error(HttpStatusCode.BadRequest, `Invalid photo ID '${id}' given`);
