@@ -13,7 +13,7 @@
 		<Link to="/album/{photo.albumId}">Back to album</Link>
 	</section>
 	<figure class="drac-box centered">
-		<img src={photo.url.href} alt="Caption: {photo.title}" loading="lazy" {...size} />
+		<img src={photo.url.href} alt="Caption: {photo.title}" {...size} />
 		<figcaption role="caption" class="drac-text drac-text-pink drac-line-height-2xl">
 			{photo.title}
 		</figcaption>
