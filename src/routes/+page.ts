@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
-import { handleError } from '../adapters/outbound/Errors';
-import type { Albums } from '../services/PhotoBrowser';
+import { handleError } from '$lib/adapters/outbound/Errors';
+import type { Albums } from '$lib/services/PhotoBrowser';
 import type { PageLoad } from './$types';
-import { browser } from '../services';
+import { browser } from '$lib/services';
 
 type Response = {
 	albums: Albums;

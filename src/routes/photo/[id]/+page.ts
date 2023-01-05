@@ -1,9 +1,9 @@
 import { error } from '@sveltejs/kit';
-import { handleError } from '../../../adapters/outbound/Errors';
-import type { Photo } from '../../../domain/Photo';
+import { handleError } from '../../../lib/adapters/outbound/Errors';
+import type { Photo } from '../../../lib/domain/Photo';
 import type { PageLoad } from './$types';
 import { parseNumericParameter } from '../../../helpers';
-import { browser } from '../../../services';
+import { browser } from '$lib/services';
 
 type SinglePhoto = {
 	photo: Photo;

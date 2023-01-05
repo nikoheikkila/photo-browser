@@ -1,9 +1,9 @@
-import { handleError } from '../../../adapters/outbound/Errors';
-import type { Photo } from '../../../domain/Photo';
+import { handleError } from '$lib/adapters/outbound/Errors';
+import type { Photo } from '$lib/domain/Photo';
 import type { PageLoad } from './$types';
 import { error } from '@sveltejs/kit';
 import { parseNumericParameter } from '../../../helpers';
-import { browser } from '../../../services';
+import { browser } from '$lib/services';
 
 type Response = {
 	albumId: number;

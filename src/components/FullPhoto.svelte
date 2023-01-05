@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Photo } from '../domain/Photo';
-	import PhotoBrowser from '../services/PhotoBrowser.js';
+	import type { Photo } from '$lib/domain/Photo';
+	import PhotoBrowser from '../lib/services/PhotoBrowser.js';
 	import Link from './Link.svelte';
 
 	export let photo: Photo;

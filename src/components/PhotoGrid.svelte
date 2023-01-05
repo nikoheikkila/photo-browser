@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Photo } from '../domain/Photo';
+	import type { Photo } from '$lib/domain/Photo';
 	import Thumbnail from './Thumbnail.svelte';
 	import Link from './Link.svelte';
 

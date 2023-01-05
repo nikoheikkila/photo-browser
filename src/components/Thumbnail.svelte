@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { Photo } from '../domain/Photo';
+	import type { Photo } from '$lib/domain/Photo';
 	import Link from './Link.svelte';
-	import PhotoBrowser from '../services/PhotoBrowser.js';
+	import PhotoBrowser from '../lib/services/PhotoBrowser.js';
 
 	export let photo: Photo;
 
