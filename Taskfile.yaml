@@ -28,6 +28,7 @@ tasks:
       - src/**/*.html
       - src/**/*.ts
       - tests/**/*.ts
+      - ./**/*.md
     cmds:
       - npx prettier --plugin-search-dir . --write .
 
@@ -38,6 +39,7 @@ tasks:
       - src/**/*.html
       - src/**/*.ts
       - tests/**/*.ts
+      - ./**/*.md
     cmds:
       - npx prettier --plugin-search-dir . --check .
       - npx eslint .
