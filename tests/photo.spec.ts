@@ -16,7 +16,7 @@ test.describe('Single photo page', () => {
 		await expect(figure).toBeVisible();
 
 		const caption = figure.getByRole('caption');
-		await expect(caption).not.toBeEmpty();
+		await expect(caption).toContainText(/\d+ by \d+ pixels/);
 
 		const photo = figure.getByRole('img');
 		await expect(photo).toHaveAttribute('alt', captionPattern);
