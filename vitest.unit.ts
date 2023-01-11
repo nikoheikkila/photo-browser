@@ -6,7 +6,7 @@ const isPipeline = !!process.env.CI;
 export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
-		include: ['src/**/*.test.ts'],
+		include: ['tests/unit/*.test.ts'],
 		reporters: ['verbose'],
 		allowOnly: !isPipeline,
 		globals: true,

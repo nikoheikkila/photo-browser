@@ -1,8 +1,8 @@
-import { PhotoCalculator } from '../PhotoCalculator';
+import { PhotoCalculator } from '$lib/services/PhotoCalculator';
 import { faker } from '@faker-js/faker';
 import type { Photo } from '$lib/domain/Photo';
 import type { Dimensions } from '$lib/domain/Schema';
-import { randomPhoto } from '../../../../tests/helpers';
+import { randomPhoto } from '../helpers';
 
 describe('Photo Calculator', () => {
 	test('returns the width and height of a photo', () => {

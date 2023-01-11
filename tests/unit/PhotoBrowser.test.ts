@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
-import PhotoBrowser from '../PhotoBrowser';
-import { FakeGateway } from './';
-import { randomPayload, randomPhoto } from '../../../../tests/helpers';
+import PhotoBrowser from '$lib/services/PhotoBrowser';
+import { randomPayload, randomPhoto } from '../helpers';
+import { FakeGateway } from './FakeGateway';
 
 const { arrayContaining, objectContaining } = expect;
 

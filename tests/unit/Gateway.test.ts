@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import type { Interceptor, Scope } from 'nock';
 import nock from 'nock';
 import { describe } from 'vitest';
-import { APIGateway } from '../Gateway';
+import { APIGateway } from '$lib/adapters/Gateway';
 
 describe('API Gateway', () => {
 	const baseURL = 'https://api.org';

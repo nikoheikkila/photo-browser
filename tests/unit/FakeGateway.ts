@@ -1,5 +1,5 @@
-import { faker } from '@faker-js/faker';
 import type { FetchParams, PhotoGateway } from '$lib/adapters/Gateway';
+import { faker } from '@faker-js/faker';
 
 export class FakeGateway implements PhotoGateway {
 	private stubs: Dictionary[] = [];
