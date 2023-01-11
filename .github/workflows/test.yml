@@ -36,5 +36,8 @@ jobs:
       - name: Run unit tests
         run: task test:unit
 
+      - name: Run component tests
+        run: task test:components
+
       - name: Run end-to-end tests
         run: task test:e2e
