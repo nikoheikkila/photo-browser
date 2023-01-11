@@ -6,10 +6,11 @@ const isPipeline = !!process.env.CI;
 const config = {
 	plugins: [sveltekit()],
 	test: {
-		include: ['src/**/*.test.ts'],
+		include: ['src/**/*.test.ts', 'tests/components/*.test.ts'],
 		reporters: ['verbose'],
 		allowOnly: !isPipeline,
 		globals: true,
+		environment: 'happy-dom',
 		cache: {
 			dir: '/tmp/.vitest-cache'
 		},
