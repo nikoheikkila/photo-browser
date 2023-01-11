@@ -6,9 +6,9 @@
 
 	export let data: PageData;
 
-	$: photos = data.photos;
+	$: photos = data?.photos || [];
 	$: isEmptyAlbum = photos.length === 0;
-	$: albumId = data.albumId;
+	$: albumId = data?.albumId;
 	$: onFirstAlbum = albumId === 1;
 </script>
 

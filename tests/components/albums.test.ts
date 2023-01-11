@@ -4,6 +4,21 @@ import { render, screen } from '@testing-library/svelte';
 import { randomPhoto } from '$lib/services/__tests__';
 
 describe('Albums page', () => {
+	test('warns user on empty photo sets', () => {
+		render(Page, {
+			data: {
+				albumId: 1,
+				photos: []
+			}
+		});
+
+		const warning = screen.getByRole('alert');
+		const heading = screen.getByRole('heading');
+
+		expect(heading).toHaveTextContent('You stumbled upon an empty album');
+		expect(warning).toHaveTextContent("Don't worry there will be photos here in the future.");
+	});
+
 	test('shows photos belonging to a single album', () => {
 		render(Page, {
 			data: {
