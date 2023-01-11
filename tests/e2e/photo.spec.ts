@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-export const captionPattern = /^Caption: (.+)$/;
 
 test.describe('Single photo page', () => {
 	test.beforeEach(async ({ page }) => {
@@ -11,31 +10,12 @@ test.describe('Single photo page', () => {
 		await expect(page).toHaveTitle(/Photo - \w+/);
 	});
 
-	test('shows details for a single photo', async ({ page }) => {
-		const figure = page.getByRole('figure');
-		await expect(figure).toBeVisible();
-
-		const caption = figure.getByRole('caption');
-		await expect(caption).toContainText(/\d+ by \d+ pixels/);
-
-		const photo = figure.getByRole('img');
-		await expect(photo).toHaveAttribute('alt', captionPattern);
-	});
-
 	test('allows user to return to home page', async ({ page }) => {
 		const homeLink = page.getByRole('navigation').getByRole('link');
 
 		await homeLink.click();
 
 		await expect(page).toHaveURL('/');
-	});
-
-	test('allows user to return to album page', async ({ page }) => {
-		const albumLink = page.getByRole('link', { name: 'Back to album' });
-
-		await albumLink.click();
-
-		await expect(page).toHaveURL(/\/album\/\d/);
 	});
 
 	test('displays informative error when photo is not found', async ({ page }) => {

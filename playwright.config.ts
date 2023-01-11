@@ -5,7 +5,7 @@ const webServerPort = 5173;
 const baseURL = `http://localhost:${webServerPort}`;
 
 const config: PlaywrightTestConfig = {
-	testDir: 'tests',
+	testDir: 'tests/e2e',
 	testMatch: '*.spec.ts',
 	fullyParallel: true,
 	workers: '80%',
