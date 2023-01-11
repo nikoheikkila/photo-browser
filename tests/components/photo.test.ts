@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import Page from '../../src/routes/photo/[id]/+page.svelte';
 import { render, screen } from '@testing-library/svelte';
-import { randomPhoto } from '$lib/services/__tests__';
+import { randomPhoto } from '../helpers';
 
 describe('Single photo page', () => {
 	test('wraps photo as a figure', () => {

@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 import Page from '../../src/routes/album/[id]/+page.svelte';
 import { render, screen } from '@testing-library/svelte';
-import { randomPhoto } from '$lib/services/__tests__';
+import { randomPhoto } from '../helpers';
 
 describe('Albums page', () => {
 	const captionPattern = /Caption: \w+/;
@@ -9,6 +9,7 @@ describe('Albums page', () => {
 	test('warns user on empty photo sets', () => {
 		render(Page, {
 			data: {
+				albumId: 1,
 				photos: []
 			}
 		});
