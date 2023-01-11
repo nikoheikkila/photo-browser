@@ -76,14 +76,14 @@ tasks:
     sources:
       - src/**/*.ts
     cmds:
-      - npx vitest run
+      - npx vitest run --config vitest.unit.ts
     env:
       NODE_ENV: test
 
   test:unit:watch:
     desc: Run unit tests in watch mode
     cmds:
-      - npx vitest watch --no-coverage
+      - npx vitest watch --config vitest.unit.ts --no-coverage
     env:
       NODE_ENV: test
 
