@@ -5,6 +5,8 @@
 
 	export let albumId = 1;
 	export let photos: Photo[] = [];
+
+	$: numberOfPhotos = `${photos.length} photo${photos.length > 1 ? 's' : ''}`;
 </script>
 
 <section class="drac-box drac-w-auto drac-p-lg">
@@ -13,7 +15,7 @@
 	</h2>
 
 	<p class="drac-text drac-text-lg drac-text-white drac-text-center">
-		{photos.length} photos in album. Click the thumbnails to view the details.
+		{numberOfPhotos} in the album. Click the thumbnails to view the details.
 	</p>
 
 	<div class="drac-d-grid">
