@@ -1,16 +1,16 @@
+import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
 
 const isPipeline = !!process.env.CI;
 
-/** @type {import('vite').UserConfig} */
-const config = {
+export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
-		include: ['src/**/*.test.ts'],
+		include: ['tests/components/*.test.ts'],
 		reporters: ['verbose'],
 		allowOnly: !isPipeline,
 		globals: true,
-		environment: 'node',
+		environment: 'jsdom',
 		cache: {
 			dir: '/tmp/.vitest-cache'
 		},
@@ -19,16 +19,6 @@ const config = {
 		},
 		sequence: {
 			shuffle: true
-		},
-		coverage: {
-			enabled: true,
-			provider: 'c8',
-			reporter: ['text', 'html']
 		}
-	},
-	fs: {
-		allow: ['..']
 	}
-};
-
-export default config;
+});

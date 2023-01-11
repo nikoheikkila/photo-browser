@@ -80,10 +80,27 @@ tasks:
     env:
       NODE_ENV: test
 
-  test:watch:
+  test:unit:watch:
     desc: Run unit tests in watch mode
     cmds:
       - npx vitest watch --no-coverage
+    env:
+      NODE_ENV: test
+
+  test:components:
+    desc: Run component tests
+    sources:
+      - src/**/*.ts
+      - tests/**/*.ts
+    cmds:
+      - npx vitest run --config vitest.components.ts
+    env:
+      NODE_ENV: test
+
+  test:components:watch:
+    desc: Run component tests in watch mode
+    cmds:
+      - npx vitest watch --config vitest.components.ts
     env:
       NODE_ENV: test
 
@@ -104,9 +121,10 @@ tasks:
 
   test:
     desc: Run the full acceptance test suite
-    deps:
+    cmds:
       - task: lint
       - task: test:unit
+      - task: test:components
       - task: test:e2e
 
   playwright:
