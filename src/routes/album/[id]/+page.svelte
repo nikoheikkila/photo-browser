@@ -30,7 +30,7 @@
 				to="/album/{albumId - 1}"
 				rel="prev"
 			>
-				Previous Album
+				Previous album
 			</Link>
 		{/if}
 		<Link
