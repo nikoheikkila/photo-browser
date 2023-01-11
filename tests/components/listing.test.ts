@@ -4,6 +4,8 @@ import { render, screen } from '@testing-library/svelte';
 import { randomPhoto } from '$lib/services/__tests__';
 
 describe('Listing Page', () => {
+	const captionPattern = /Caption: \w+/;
+
 	test('displays a warning with empty album set', () => {
 		render(Page, {
 			data: {
@@ -50,33 +52,30 @@ describe('Listing Page', () => {
 		render(Page, {
 			data: {
 				albums: {
-					1: [randomPhoto({ title: 'Photo 1' })],
-					2: [randomPhoto({ title: 'Photo 2' }), randomPhoto({ title: 'Photo 3' })],
-					3: [
-						randomPhoto({ title: 'Photo 4' }),
-						randomPhoto({ title: 'Photo 5' }),
-						randomPhoto({ title: 'Photo 6' })
-					]
+					1: [randomPhoto()],
+					2: [randomPhoto(), randomPhoto()],
+					3: [randomPhoto(), randomPhoto(), randomPhoto()]
 				}
 			}
 		});
 
-		const accessiblePhotos = screen.getAllByAltText(/Photo/);
+		const accessiblePhotos = screen.getAllByAltText(captionPattern);
 
 		expect(accessiblePhotos).toHaveLength(6);
 	});
 
 	test('photos in page link to a single photo page', () => {
+		const id = 1;
 		render(Page, {
 			data: {
 				albums: {
-					1: [randomPhoto({ id: 1, title: 'Photo 1' })]
+					1: [randomPhoto({ id })]
 				}
 			}
 		});
 
-		const link = screen.getByRole('link', { name: /Photo 1/ });
+		const link = screen.getByRole('link', { name: captionPattern });
 
-		expect(link).toHaveAttribute('href', '/photo/1');
+		expect(link).toHaveAttribute('href', `/photo/${id}`);
 	});
 });

@@ -4,10 +4,11 @@ import { render, screen } from '@testing-library/svelte';
 import { randomPhoto } from '$lib/services/__tests__';
 
 describe('Albums page', () => {
+	const captionPattern = /Caption: \w+/;
+
 	test('warns user on empty photo sets', () => {
 		render(Page, {
 			data: {
-				albumId: 1,
 				photos: []
 			}
 		});
@@ -20,83 +21,82 @@ describe('Albums page', () => {
 	});
 
 	test('shows photos belonging to a single album', () => {
+		const albumId = 3;
+		const photos = [randomPhoto({ albumId }), randomPhoto({ albumId })];
 		render(Page, {
 			data: {
-				albumId: 3,
-				photos: [
-					randomPhoto({ albumId: 3 }),
-					randomPhoto({ albumId: 3 }),
-					randomPhoto({ albumId: 3 }),
-					randomPhoto({ albumId: 3 })
-				]
+				albumId,
+				photos
 			}
 		});
 
-		const title = screen.getByRole('heading', { name: 'Photos from album 3' });
-		const photos = screen.getAllByRole('img');
+		const title = screen.getByRole('heading', { name: `Photos from album ${albumId}` });
+		const allPhotos = screen.getAllByRole('img');
 
 		expect(title).toBeVisible();
-		expect(photos).toHaveLength(4);
+		expect(allPhotos).toHaveLength(photos.length);
 	});
 
 	test('lists photos with accessible screen reader texts', () => {
+		const albumId = 3;
+		const photos = [randomPhoto({ albumId }), randomPhoto({ albumId })];
+
 		render(Page, {
 			data: {
-				albumId: 3,
-				photos: [
-					randomPhoto({ albumId: 3, title: 'Photo 1' }),
-					randomPhoto({ albumId: 3, title: 'Photo 2' }),
-					randomPhoto({ albumId: 3, title: 'Photo 3' }),
-					randomPhoto({ albumId: 3, title: 'Photo 4' })
-				]
+				albumId,
+				photos
 			}
 		});
 
-		const accessiblePhotos = screen.getAllByAltText(/Photo/);
+		const accessiblePhotos = screen.getAllByAltText(captionPattern);
 
-		expect(accessiblePhotos).toHaveLength(4);
+		expect(accessiblePhotos).toHaveLength(photos.length);
 	});
 
 	test('photos in album link to a single photo page', () => {
+		const id = 1;
+		const albumId = 3;
 		render(Page, {
 			data: {
-				albumId: 1,
-				photos: [randomPhoto({ id: 1, albumId: 1, title: 'Photo 1' })]
+				albumId,
+				photos: [randomPhoto({ id, albumId })]
 			}
 		});
 
-		const link = screen.getByRole('link', { name: /Photo 1/ });
+		const link = screen.getByRole('link', { name: captionPattern });
 
-		expect(link).toHaveAttribute('href', '/photo/1');
+		expect(link).toHaveAttribute('href', `/photo/${id}`);
 	});
 
 	test('allows navigating between album pages', () => {
+		const albumId = 3;
 		render(Page, {
 			data: {
-				albumId: 2,
-				photos: [randomPhoto({ id: 1, albumId: 2, title: 'Photo 1' })]
+				albumId,
+				photos: [randomPhoto({ albumId })]
 			}
 		});
 
 		const previousAlbumLink = screen.getByRole('link', { name: 'Previous album' });
 		const nextAlbumLink = screen.getByRole('link', { name: 'Next album' });
 
-		expect(previousAlbumLink).toHaveAttribute('href', '/album/1');
-		expect(nextAlbumLink).toHaveAttribute('href', '/album/3');
+		expect(previousAlbumLink).toBeVisible();
+		expect(previousAlbumLink).toHaveAttribute('href', `/album/${albumId - 1}`);
+		expect(nextAlbumLink).toBeVisible();
+		expect(nextAlbumLink).toHaveAttribute('href', `/album/${albumId + 1}`);
 	});
 
 	test('does not allow navigating to previous album from the first album', () => {
+		const albumId = 1;
 		render(Page, {
 			data: {
-				albumId: 1,
-				photos: [randomPhoto({ id: 1, albumId: 1, title: 'Photo 1' })]
+				albumId,
+				photos: [randomPhoto({ albumId })]
 			}
 		});
 
 		const previousAlbumLink = screen.queryByRole('link', { name: 'Previous album' });
-		const nextAlbumLink = screen.getByRole('link', { name: 'Next album' });
 
 		expect(previousAlbumLink).not.toBeInTheDocument();
-		expect(nextAlbumLink).toBeVisible();
 	});
 });

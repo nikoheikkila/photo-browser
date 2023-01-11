@@ -20,7 +20,7 @@ describe('Single photo page', () => {
 		render(Page, {
 			data: {
 				photo: randomPhoto({
-					title: 'Test photo',
+					title: 'Selfie',
 					url: new URL('https://via.placeholder.com/500/abcdefg')
 				})
 			}
@@ -28,23 +28,23 @@ describe('Single photo page', () => {
 
 		const caption = screen.getByRole('caption');
 
-		expect(caption).toHaveTextContent(/Test photo/);
+		expect(caption).toHaveTextContent(/Selfie/);
 		expect(caption).toHaveTextContent(/500 by 500 pixels/);
 	});
 
 	test('contains a photo with accessible alternative text', () => {
 		render(Page, {
 			data: {
-				photo: randomPhoto({ title: 'Accessible text here' })
+				photo: randomPhoto({ title: 'My friend' })
 			}
 		});
 
 		const photo = screen.getByRole('img');
 
-		expect(photo).toHaveAttribute('alt', 'Caption: Accessible text here');
+		expect(photo).toHaveAttribute('alt', 'Caption: My friend');
 	});
 
-	test('contains a link back to the home page', () => {
+	test('contains a link back to the album page', () => {
 		render(Page, {
 			data: {
 				photo: randomPhoto({ albumId: 3 })
@@ -53,6 +53,7 @@ describe('Single photo page', () => {
 
 		const link = screen.getByRole('link', { name: 'Back to album' });
 
+		expect(link).toBeVisible();
 		expect(link).toHaveAttribute('href', '/album/3');
 	});
 });
