@@ -6,19 +6,17 @@ test.describe('Albums page', () => {
 		await expect(page.getByRole('main')).toBeVisible();
 	});
 
-	test('page has an accessible title', async ({ page }) => {
+	test('has an accessible title', async ({ page }) => {
 		await expect(page).toHaveTitle(/Photos for album \d+/);
 	});
 
-	test('does not allow navigating to previous album from the first album', async ({ page }) => {
-		const previousAlbumLink = page.getByRole('link', { name: 'Previous album' });
-		await expect(previousAlbumLink).toBeHidden();
+	test('lists a number of photos', async ({ page }) => {
+		const numberOfPhotos = await page.getByRole('img').count();
 
-		const nextAlbumLink = page.getByRole('link', { name: 'Next album' });
-		await expect(nextAlbumLink).toBeVisible();
+		await expect(numberOfPhotos).toBeGreaterThan(0);
 	});
 
-	test('shows warning on invalid album ID', async ({ page }) => {
+	test('warns on invalid album ID', async ({ page }) => {
 		const warning = page.getByRole('alert');
 
 		await page.goto('/album/invalid');

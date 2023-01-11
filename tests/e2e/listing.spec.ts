@@ -6,11 +6,13 @@ test.describe('Photo listing', () => {
 		await expect(page.getByRole('main')).toBeVisible();
 	});
 
-	test('document has specified English as language', async ({ page }) => {
-		await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+	test('has an accessible title', async ({ page }) => {
+		await expect(page).toHaveTitle(/Home/);
 	});
 
-	test('page has an accessible title', async ({ page }) => {
-		await expect(page).toHaveTitle(/Home/);
+	test('lists a number of photos', async ({ page }) => {
+		const numberOfPhotos = await page.getByRole('img').count();
+
+		await expect(numberOfPhotos).toBeGreaterThan(0);
 	});
 });

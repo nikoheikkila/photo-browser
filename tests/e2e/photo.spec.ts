@@ -6,16 +6,14 @@ test.describe('Single photo page', () => {
 		await expect(page.getByRole('main')).toBeVisible();
 	});
 
-	test('page has an accessible title', async ({ page }) => {
+	test('has an accessible title', async ({ page }) => {
 		await expect(page).toHaveTitle(/Photo - \w+/);
 	});
 
-	test('allows user to return to home page', async ({ page }) => {
-		const homeLink = page.getByRole('navigation').getByRole('link');
+	test('lists a single photos', async ({ page }) => {
+		const photos = page.getByRole('img');
 
-		await homeLink.click();
-
-		await expect(page).toHaveURL('/');
+		await expect(photos).toHaveCount(1);
 	});
 
 	test('displays informative error when photo is not found', async ({ page }) => {
