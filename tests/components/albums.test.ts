@@ -1,102 +1,104 @@
-import '@testing-library/jest-dom';
 import Page from '../../src/routes/album/[id]/+page.svelte';
+import type { PageData } from '../../src/routes/album/[id]/$types';
 import { render, screen } from '@testing-library/svelte';
 import { randomPhoto } from '../helpers';
+import { captionPattern } from './helpers';
 
 describe('Albums page', () => {
-	const captionPattern = /Caption: \w+/;
+	const arrange = (data: PageData) => {
+		return render(Page, {
+			data
+		});
+	};
 
-	test('warns user on empty photo sets', () => {
-		render(Page, {
-			data: {
-				albumId: 1,
-				photos: []
-			}
+	test('warns user on empty photo sets', async () => {
+		arrange({
+			albumId: 1,
+			photos: []
 		});
 
-		const warning = screen.getByRole('alert');
-		const heading = screen.getByRole('heading');
+		const warning = await screen.findByRole('alert');
+		const heading = await screen.findByRole('heading');
 
-		expect(heading).toHaveTextContent('You stumbled upon an empty album');
-		expect(warning).toHaveTextContent("Don't worry there will be photos here in the future.");
+		expect(heading).toHaveTextContent(/you stumbled upon an empty album/i);
+		expect(warning).toHaveTextContent(/don't worry there will be photos here in the future/i);
 	});
 
-	test('shows photos belonging to a single album', () => {
+	test('shows photos belonging to a single album', async () => {
 		const albumId = 3;
 		const photos = [randomPhoto({ albumId }), randomPhoto({ albumId })];
-		render(Page, {
-			data: {
-				albumId,
-				photos
-			}
+		arrange({
+			albumId,
+			photos
 		});
 
-		const title = screen.getByRole('heading', { name: `Photos from album ${albumId}` });
-		const allPhotos = screen.getAllByRole('img');
+		const title = await screen.findByRole('heading', { name: `Photos from album ${albumId}` });
+		const allPhotos = await screen.findAllByRole('img');
 
 		expect(title).toBeVisible();
 		expect(allPhotos).toHaveLength(photos.length);
 	});
 
-	test('lists photos with accessible screen reader texts', () => {
+	test('lists photos with accessible screen reader texts', async () => {
 		const albumId = 3;
 		const photos = [randomPhoto({ albumId }), randomPhoto({ albumId })];
-
-		render(Page, {
-			data: {
-				albumId,
-				photos
-			}
+		arrange({
+			albumId,
+			photos
 		});
 
-		const accessiblePhotos = screen.getAllByAltText(captionPattern);
+		const accessiblePhotos = await screen.findAllByAltText(captionPattern);
 
 		expect(accessiblePhotos).toHaveLength(photos.length);
 	});
 
-	test('photos in album link to a single photo page', () => {
+	test('photos in album link to a single photo page', async () => {
 		const id = 1;
 		const albumId = 3;
-		render(Page, {
-			data: {
-				albumId,
-				photos: [randomPhoto({ id, albumId })]
-			}
+		arrange({
+			albumId,
+			photos: [randomPhoto({ id, albumId })]
 		});
 
-		const link = screen.getByRole('link', { name: captionPattern });
+		const link = await screen.findByRole('link', { name: captionPattern });
 
 		expect(link).toHaveAttribute('href', `/photo/${id}`);
 	});
 
-	test('allows navigating between album pages', () => {
+	test('allows navigating to next album page', async () => {
 		const albumId = 3;
-		render(Page, {
-			data: {
-				albumId,
-				photos: [randomPhoto({ albumId })]
-			}
+		arrange({
+			albumId,
+			photos: [randomPhoto({ albumId })]
 		});
 
-		const previousAlbumLink = screen.getByRole('link', { name: 'Previous album' });
-		const nextAlbumLink = screen.getByRole('link', { name: 'Next album' });
+		const nextAlbumLink = await screen.findByRole('link', { name: /next album/i });
 
-		expect(previousAlbumLink).toBeVisible();
-		expect(previousAlbumLink).toHaveAttribute('href', `/album/${albumId - 1}`);
 		expect(nextAlbumLink).toBeVisible();
 		expect(nextAlbumLink).toHaveAttribute('href', `/album/${albumId + 1}`);
 	});
 
-	test('does not allow navigating to previous album from the first album', () => {
-		const albumId = 1;
-		render(Page, {
-			data: {
-				albumId,
-				photos: [randomPhoto({ albumId })]
-			}
+	test('allows navigating to previous album page', async () => {
+		const albumId = 3;
+		arrange({
+			albumId,
+			photos: [randomPhoto({ albumId })]
 		});
 
-		const previousAlbumLink = screen.queryByRole('link', { name: 'Previous album' });
+		const previousAlbumLink = await screen.findByRole('link', { name: /previous album/i });
+
+		expect(previousAlbumLink).toBeVisible();
+		expect(previousAlbumLink).toHaveAttribute('href', `/album/${albumId - 1}`);
+	});
+
+	test('does not allow navigating to previous album from the first album', () => {
+		const albumId = 1;
+		arrange({
+			albumId,
+			photos: [randomPhoto({ albumId })]
+		});
+
+		const previousAlbumLink = screen.queryByRole('link', { name: /previous album/i });
 
 		expect(previousAlbumLink).not.toBeInTheDocument();
 	});

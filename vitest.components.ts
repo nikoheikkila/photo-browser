@@ -7,6 +7,7 @@ export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
 		include: ['tests/components/*.test.ts'],
+		setupFiles: ['tests/components/setup.ts'],
 		reporters: ['verbose'],
 		allowOnly: !isPipeline,
 		globals: true,
