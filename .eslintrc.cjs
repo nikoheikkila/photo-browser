@@ -1,10 +1,18 @@
+// testing-library/prefer-screen-queries: off
+
 module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
+	plugins: ['svelte3', '@typescript-eslint', 'testing-library', 'jest-dom'],
 	extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
-	plugins: ['svelte3', '@typescript-eslint'],
 	ignorePatterns: ['*.cjs'],
-	overrides: [{ files: ['*.svelte'], processor: 'svelte3/svelte3' }],
+	overrides: [
+		{ files: ['*.svelte'], processor: 'svelte3/svelte3' },
+		{
+			files: ['tests/components/*.ts'],
+			extends: ['plugin:jest-dom/recommended', 'plugin:testing-library/dom']
+		}
+	],
 	settings: {
 		'svelte3/typescript': () => require('typescript')
 	},

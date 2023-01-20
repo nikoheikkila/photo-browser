@@ -31,6 +31,7 @@ tasks:
       - ./**/*.md
     cmds:
       - npx prettier --plugin-search-dir . --write .
+      - npx eslint --fix .
 
   lint:
     desc: Lint the codebase
