@@ -1,5 +1,5 @@
 import type { Photo } from '$lib/domain/Photo';
-import { Dimensions } from '$lib/domain/Schema';
+import { Dimensions } from '$lib/domain/Dimensions';
 
 export class PhotoCalculator {
 	private readonly photo: Photo;

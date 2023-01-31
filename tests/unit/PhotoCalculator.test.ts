@@ -1,7 +1,7 @@
 import { PhotoCalculator } from '$lib/services/PhotoCalculator';
 import { faker } from '@faker-js/faker';
 import type { Photo } from '$lib/domain/Photo';
-import type { Dimensions } from '$lib/domain/Schema';
+import type { Dimensions } from '$lib/domain/Dimensions';
 import { randomPhoto } from '../helpers';
 
 describe('Photo Calculator', () => {
