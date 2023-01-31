@@ -1,5 +1,3 @@
-// testing-library/prefer-screen-queries: off
-
 module.exports = {
 	root: true,
 	parser: '@typescript-eslint/parser',
