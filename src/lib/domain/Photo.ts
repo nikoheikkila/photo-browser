@@ -1,7 +1,7 @@
 import * as z from 'zod';
 import * as Schema from './Schema';
 
-export const Photo = z.object({
+const Photo = z.object({
 	id: Schema.positiveInteger('Photo ID must be greater than zero'),
 	albumId: Schema.positiveInteger('Album ID must be greater than zero'),
 	title: Schema.nonEmptyString('Title must be a non-empty string'),

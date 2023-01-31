@@ -3,7 +3,6 @@ import type { Photo } from '$lib/domain/Photo';
 import type { PageLoad } from './$types';
 import type { HttpError } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
-import { parseNumericParameter } from '../../helpers';
 import { browser } from '$lib/services';
 import { HttpStatusCode } from 'axios';
 
@@ -13,7 +12,7 @@ type Response = {
 };
 
 export const load: PageLoad<Response> = async ({ params }) => {
-	const albumId = parseNumericParameter(params.id);
+	const albumId = Number.parseInt(params.id);
 
 	if (Number.isNaN(albumId)) {
 		throw invalidAlbum(params.id);

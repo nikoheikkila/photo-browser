@@ -1,9 +1,12 @@
 import type { Photo } from '$lib/domain/Photo';
-import { Dimensions } from '$lib/domain/Dimensions';
+import type { Dimensions } from '$lib/domain/Dimensions';
+import { parseDimensions } from '../domain/Dimensions';
 
 export class PhotoCalculator {
 	private readonly photo: Photo;
+	private readonly dimensionPattern: RegExp = /^\/(\d+)\/(.+)$/;
 	private readonly defaultFullSize: Dimensions = { width: 600, height: 600 };
+
 	private readonly defaultThumbnailSize: Dimensions = { width: 150, height: 150 };
 
 	constructor(photo: Photo) {
@@ -19,14 +22,14 @@ export class PhotoCalculator {
 	}
 
 	private parseSizeFromURL(url: URL, fallback: Dimensions): Dimensions {
-		const dimension = url.pathname.match(/^\/(\d+)\/(.+)$/)?.at(1);
-		const result = Number.parseInt(dimension || '', 10);
+		const dimension = url.pathname.match(this.dimensionPattern)?.at(1);
+		const result = Number.parseInt(dimension || '');
 
-		if (Number.isNaN(result) || result === 0) {
-			return Dimensions.parse(fallback);
+		if (Number.isNaN(result) || result < 1) {
+			return parseDimensions(fallback);
 		}
 
-		return Dimensions.parse({
+		return parseDimensions({
 			width: result,
 			height: result
 		});
