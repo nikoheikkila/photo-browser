@@ -2,10 +2,11 @@ import { faker } from '@faker-js/faker';
 import PhotoBrowser from '$lib/services/PhotoBrowser';
 import { randomPayload, randomPhoto } from '../helpers';
 import { FakeGateway } from './FakeGateway';
+import { describe, test } from 'vitest';
 
 const { arrayContaining, objectContaining } = expect;
 
-describe('Photo Browser', () => {
+describe.concurrent('Photo Browser', () => {
 	let gateway: FakeGateway;
 	let browser: PhotoBrowser;
 

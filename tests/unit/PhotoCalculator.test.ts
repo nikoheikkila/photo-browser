@@ -3,8 +3,9 @@ import { faker } from '@faker-js/faker';
 import type { Photo } from '$lib/domain/Photo';
 import type { Dimensions } from '$lib/domain/Dimensions';
 import { randomPhoto } from '../helpers';
+import { describe, test } from 'vitest';
 
-describe('Photo Calculator', () => {
+describe.concurrent('Photo Calculator', () => {
 	test('returns the width and height of a photo', () => {
 		const full = faker.datatype.number({ min: 1 });
 		const thumbnail = faker.datatype.number({ min: 1 });

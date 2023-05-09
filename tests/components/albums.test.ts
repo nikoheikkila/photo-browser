@@ -3,8 +3,9 @@ import type { PageData } from '../../src/routes/album/[id]/$types';
 import { render, screen } from '@testing-library/svelte';
 import { randomPhoto } from '../helpers';
 import { captionPattern } from './helpers';
+import { describe, test } from 'vitest';
 
-describe('Albums page', () => {
+describe.concurrent('Albums page', () => {
 	const arrange = (data: PageData) => {
 		return render(Page, {
 			data

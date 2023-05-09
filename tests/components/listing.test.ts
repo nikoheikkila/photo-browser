@@ -3,8 +3,9 @@ import type { PageData } from '../../src/routes/$types';
 import { render, screen } from '@testing-library/svelte';
 import { randomPhoto } from '../helpers';
 import { captionPattern } from './helpers';
+import { describe, test } from 'vitest';
 
-describe('Listing Page', () => {
+describe.concurrent('Listing Page', () => {
 	const arrange = (data: PageData) => {
 		return render(Page, {
 			data

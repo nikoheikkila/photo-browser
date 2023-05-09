@@ -1,10 +1,10 @@
 import { faker } from '@faker-js/faker';
 import type { Interceptor, Scope } from 'nock';
 import nock from 'nock';
-import { describe } from 'vitest';
+import { describe, test } from 'vitest';
 import { APIGateway } from '$lib/adapters/Gateway';
 
-describe('API Gateway', () => {
+describe.concurrent('API Gateway', () => {
 	const baseURL = 'https://api.org';
 
 	let scope: Scope;

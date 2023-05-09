@@ -2,8 +2,9 @@ import Page from '../../src/routes/photo/[id]/+page.svelte';
 import type { PageData } from '../../src/routes/photo/[id]/$types';
 import { render, screen } from '@testing-library/svelte';
 import { randomPhoto } from '../helpers';
+import { describe, test } from 'vitest';
 
-describe('Single photo page', () => {
+describe.concurrent('Single photo page', () => {
 	const arrange = (data: PageData) => {
 		return render(Page, {
 			data
