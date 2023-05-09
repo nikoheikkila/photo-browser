@@ -12,7 +12,7 @@ export default defineConfig({
 		reporters: ['verbose'],
 		allowOnly: !isPipeline,
 		globals: true,
-		environment: 'jsdom',
+		environment: 'happy-dom',
 		maxConcurrency: cpus().length,
 		cache: {
 			dir: '/tmp/.vitest-cache'
