@@ -3,6 +3,7 @@ import type { Interceptor, Scope } from 'nock';
 import nock from 'nock';
 import { describe, test } from 'vitest';
 import { APIGateway } from '$lib/adapters/Gateway';
+import { randomPayload } from '../helpers';
 
 describe.concurrent('API Gateway', () => {
 	const baseURL = 'https://api.org';
@@ -129,13 +130,4 @@ describe.concurrent('API Gateway', () => {
 			});
 		});
 	});
-});
-
-const randomPayload = (extra: Dictionary = {}) => ({
-	id: faker.datatype.number({ min: 1 }),
-	albumId: faker.datatype.number({ min: 1 }),
-	title: faker.lorem.sentence(),
-	url: faker.internet.url(),
-	thumbnailUrl: faker.internet.url(),
-	...extra
 });
