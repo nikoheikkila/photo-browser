@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import type { Interceptor, Scope } from 'nock';
 import nock from 'nock';
 import { describe, test } from 'vitest';
