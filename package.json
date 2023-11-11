@@ -30,7 +30,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"axios": "^1.4.0",
+		"axios": "^1.6.0",
 		"dracula-ui": "1.0.6",
 		"zod": "^3.22.3"
 	},
