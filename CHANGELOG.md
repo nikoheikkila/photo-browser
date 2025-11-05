@@ -35,6 +35,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Build & Deploy**
 - Updated @sveltejs/adapter-netlify from v2.0.7 to v5.2.4 (major version)
 
+**CI/CD**
+- Updated GitHub Actions workflow to use latest action versions
+- Updated actions/checkout from v3 to v4
+- Updated actions/setup-node from v3 to v4
+- Updated arduino/setup-task from v1 to v2
+- Updated Node.js runtime from 18.x to 22.x (latest LTS)
+
 **Libraries**
 - Updated axios from v1.4.0 to v1.13.2
 - Updated zod from v3.22.3 to v4.1.12 (major version)
@@ -47,7 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Configuration Updates**
 - Fixed `svelte.config.js`: Updated `vitePreprocess` import from `@sveltejs/kit/vite` to `@sveltejs/vite-plugin-svelte`
 - Fixed `vite.config.js`: Moved `fs.allow` configuration into `server.fs.allow` (Vite v7 requirement)
-- Updated `vitest.unit.ts`: Changed coverage provider from 'c8' to 'v8'
+- Updated `vitest.unit.ts` and `vitest.components.ts`: Changed coverage provider from 'c8' to 'v8'
+- Updated `vitest.unit.ts` and `vitest.components.ts`: Changed deprecated `cache.dir` to `cacheDir` (Vitest v4 requirement)
 - Fixed `app.html`: Removed hardcoded `<title>` tag to allow page-specific titles from `<svelte:head>`
 
 **Test Fixes**
@@ -59,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `.concurrent` from all describe blocks to fix nock interceptor issues
 - Added missing imports: `beforeEach`, `expect`, `vitest` to test files
 - Updated E2E test expectations to match actual page titles with "Photo Browser | " prefix
+- Added missing `await` to all `expect().rejects.toThrowError()` assertions (15 tests) for Vitest v3+ compatibility
 
 **Code Quality**
 - Fixed Biome linting errors in `src/lib/domain/Group.ts`: Replaced assignment in expression with explicit if statement
