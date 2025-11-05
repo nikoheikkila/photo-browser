@@ -7,12 +7,12 @@ test.describe('Photo listing', () => {
 	});
 
 	test('has an accessible title', async ({ page }) => {
-		await expect(page).toHaveTitle(/Home/);
+		await expect(page).toHaveTitle(/Photo Browser \| Home/);
 	});
 
 	test('lists a number of photos', async ({ page }) => {
 		const numberOfPhotos = await page.getByRole('img').count();
 
-		await expect(numberOfPhotos).toBeGreaterThan(0);
+		expect(numberOfPhotos).toBeGreaterThan(0);
 	});
 });

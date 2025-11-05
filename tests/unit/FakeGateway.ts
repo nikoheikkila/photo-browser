@@ -1,5 +1,5 @@
-import type { FetchParams, PhotoGateway } from '$lib/adapters/Gateway';
 import { faker } from '@faker-js/faker';
+import type { FetchParams, PhotoGateway } from '$lib/adapters/Gateway';
 
 export class FakeGateway implements PhotoGateway {
 	private stubs: Dictionary[] = [];
@@ -7,8 +7,8 @@ export class FakeGateway implements PhotoGateway {
 
 	private stubPhoto(): Dictionary {
 		return {
-			id: faker.datatype.number({ min: 1 }),
-			albumId: faker.datatype.number({ min: 1 }),
+			id: faker.number.int({ min: 1, max: 1000 }),
+			albumId: faker.number.int({ min: 1, max: 1000 }),
 			title: faker.lorem.sentence(),
 			url: faker.internet.url(),
 			thumbnailUrl: faker.internet.url()

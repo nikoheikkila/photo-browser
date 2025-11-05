@@ -2,8 +2,8 @@ import { faker } from '@faker-js/faker';
 import type { Photo } from '$lib/domain/Photo';
 
 export const randomPayload = (extra: Dictionary = {}) => ({
-	id: faker.datatype.number({ min: 1 }),
-	albumId: faker.datatype.number({ min: 1 }),
+	id: faker.number.int({ min: 1, max: 1000 }),
+	albumId: faker.number.int({ min: 1, max: 1000 }),
 	title: faker.lorem.sentence(),
 	url: faker.internet.url().concat('/'),
 	thumbnailUrl: faker.internet.url().concat('/'),

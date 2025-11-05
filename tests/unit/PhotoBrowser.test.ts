@@ -1,12 +1,10 @@
 import { faker } from '@faker-js/faker';
+import { beforeEach, describe, expect, test, vitest } from 'vitest';
 import PhotoBrowser from '$lib/services/PhotoBrowser';
 import { randomPayload, randomPhoto } from '../helpers';
 import { FakeGateway } from './FakeGateway';
-import { describe, test } from 'vitest';
 
-const { arrayContaining, objectContaining } = expect;
-
-describe.concurrent('Photo Browser', () => {
+describe('Photo Browser', () => {
 	let gateway: FakeGateway;
 	let browser: PhotoBrowser;
 
@@ -56,15 +54,15 @@ describe.concurrent('Photo Browser', () => {
 		test('throws error with null server response', async () => {
 			gateway.feedWith([{}]);
 
-			expect(() => browser.loadPhotos()).rejects.toThrowError(
+			await expect(() => browser.loadPhotos()).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
 
 		test('throws error with malformed server response', async () => {
-			gateway.feedWith([{ key: faker.datatype.string() }]);
+			gateway.feedWith([{ key: faker.string.alpha() }]);
 
-			expect(() => browser.loadPhotos()).rejects.toThrowError(
+			await expect(() => browser.loadPhotos()).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
@@ -73,13 +71,13 @@ describe.concurrent('Photo Browser', () => {
 			const expectedError = 'Could not load photos';
 			gateway.setError(new Error(expectedError));
 
-			expect(() => browser.loadPhotos()).rejects.toThrowError(new RegExp(expectedError));
+			await expect(() => browser.loadPhotos()).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
 
 	describe('loading a single photo', () => {
 		test('returns a valid single photo', async () => {
-			const id = faker.datatype.number({ min: 1 });
+			const id = faker.number.int({ min: 1, max: 1000 });
 
 			const photo = await browser.loadPhoto(id);
 
@@ -91,7 +89,9 @@ describe.concurrent('Photo Browser', () => {
 		});
 
 		test('throws error with ID less than 1', async () => {
-			expect(() => browser.loadPhoto(0)).rejects.toThrowError('Photo ID must be greater than zero');
+			await expect(() => browser.loadPhoto(0)).rejects.toThrowError(
+				'Photo ID must be greater than zero'
+			);
 		});
 
 		test('throws error with album ID less than 1', async () => {
@@ -102,7 +102,9 @@ describe.concurrent('Photo Browser', () => {
 				})
 			]);
 
-			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Album ID must be greater than zero/);
+			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(
+				/Album ID must be greater than zero/
+			);
 		});
 
 		test('throws error with empty title', async () => {
@@ -113,7 +115,9 @@ describe.concurrent('Photo Browser', () => {
 				})
 			]);
 
-			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Title must be a non-empty string/);
+			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(
+				/Title must be a non-empty string/
+			);
 		});
 
 		test('throws error with invalid photo URL', async () => {
@@ -124,7 +128,7 @@ describe.concurrent('Photo Browser', () => {
 				})
 			]);
 
-			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Photo URL must be valid/);
+			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Photo URL must be valid/);
 		});
 
 		test('throws error with invalid thumbnail URL', async () => {
@@ -135,21 +139,21 @@ describe.concurrent('Photo Browser', () => {
 				})
 			]);
 
-			expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Thumbnail URL must be valid/);
+			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Thumbnail URL must be valid/);
 		});
 
 		test('throws error with empty server response', async () => {
 			gateway.feedWith([{}]);
 
-			expect(() => browser.loadPhoto(1)).rejects.toThrowError(
+			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
 
 		test('throws error with non-schematic server response', async () => {
-			gateway.feedWith([{ key: faker.datatype.string() }]);
+			gateway.feedWith([{ key: faker.string.alpha() }]);
 
-			expect(() => browser.loadPhoto(1)).rejects.toThrowError(
+			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
@@ -158,13 +162,13 @@ describe.concurrent('Photo Browser', () => {
 			const expectedError = 'Could not load photo with ID 1';
 			gateway.setError(new Error(expectedError));
 
-			expect(() => browser.loadPhoto(1)).rejects.toThrowError(new RegExp(expectedError));
+			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
 
 	describe('loading photos by album', () => {
 		test('returns a collection of photos in the same album', async () => {
-			const albumId = faker.datatype.number({ min: 1 });
+			const albumId = faker.number.int({ min: 1, max: 1000 });
 
 			const photos = await browser.loadFromAlbum(albumId);
 			const albumPhotos = photos.filter((photo) => photo.albumId === albumId);
@@ -173,7 +177,7 @@ describe.concurrent('Photo Browser', () => {
 		});
 
 		test('returns a limited collection of photos in the same album', async () => {
-			const albumId = faker.datatype.number({ min: 1 });
+			const albumId = faker.number.int({ min: 1, max: 1000 });
 			const limit = 5;
 
 			const photos = await browser.withLimit(limit).loadFromAlbum(albumId);
@@ -182,7 +186,7 @@ describe.concurrent('Photo Browser', () => {
 		});
 
 		test('throws error with ID less than 1', async () => {
-			expect(() => browser.loadFromAlbum(0)).rejects.toThrowError(
+			await expect(() => browser.loadFromAlbum(0)).rejects.toThrowError(
 				'Album ID must be greater than zero'
 			);
 		});
@@ -190,15 +194,15 @@ describe.concurrent('Photo Browser', () => {
 		test('throws error with empty server response', async () => {
 			gateway.feedWith([{}]);
 
-			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
+			await expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
 
 		test('throws error with non-schematic server response', async () => {
-			gateway.feedWith([{ key: faker.datatype.string() }]);
+			gateway.feedWith([{ key: faker.string.alpha() }]);
 
-			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
+			await expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
@@ -207,7 +211,7 @@ describe.concurrent('Photo Browser', () => {
 			const expectedError = 'Could not load album with ID 1';
 			gateway.setError(new Error(expectedError));
 
-			expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(new RegExp(expectedError));
+			await expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
 
@@ -219,8 +223,8 @@ describe.concurrent('Photo Browser', () => {
 			const albums = await browser.groupPhotosByAlbum();
 
 			expect(albums).toMatchObject({
-				[payload.albumId]: arrayContaining([
-					objectContaining({
+				[payload.albumId]: expect.arrayContaining([
+					expect.objectContaining({
 						id: payload.id
 					})
 				])
@@ -251,8 +255,14 @@ describe.concurrent('Photo Browser', () => {
 			const albums = await browser.groupPhotosByAlbum();
 
 			expect(albums).toMatchObject({
-				5: arrayContaining([objectContaining({ id: 1 }), objectContaining({ id: 2 })]),
-				6: arrayContaining([objectContaining({ id: 3 }), objectContaining({ id: 4 })])
+				5: expect.arrayContaining([
+					expect.objectContaining({ id: 1 }),
+					expect.objectContaining({ id: 2 })
+				]),
+				6: expect.arrayContaining([
+					expect.objectContaining({ id: 3 }),
+					expect.objectContaining({ id: 4 })
+				])
 			});
 		});
 
@@ -280,8 +290,14 @@ describe.concurrent('Photo Browser', () => {
 			const albums = await browser.groupPhotosByAlbum();
 
 			expect(albums).toMatchObject({
-				5: arrayContaining([objectContaining({ id: 1 }), objectContaining({ id: 2 })]),
-				6: arrayContaining([objectContaining({ id: 3 }), objectContaining({ id: 4 })])
+				5: expect.arrayContaining([
+					expect.objectContaining({ id: 1 }),
+					expect.objectContaining({ id: 2 })
+				]),
+				6: expect.arrayContaining([
+					expect.objectContaining({ id: 3 }),
+					expect.objectContaining({ id: 4 })
+				])
 			});
 		});
 	});

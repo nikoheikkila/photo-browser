@@ -1,17 +1,17 @@
-import { error } from '@sveltejs/kit';
 import type { HttpError } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
+import { HttpStatusCode } from 'axios';
 import { handleError } from '$lib/adapters/Errors';
 import type { Photo } from '$lib/domain/Photo';
-import type { PageLoad } from './$types';
 import { browser } from '$lib/services';
-import { HttpStatusCode } from 'axios';
+import type { PageLoad } from './$types';
 
 type Response = {
 	photo: Photo;
 };
 
 export const load: PageLoad<Response> = async ({ params }) => {
-	const id = Number.parseInt(params.id);
+	const id = Number.parseInt(params.id, 10);
 
 	if (Number.isNaN(id)) {
 		throw invalidPhoto(params.id);

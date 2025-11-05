@@ -1,11 +1,11 @@
+import { render, screen } from '@testing-library/svelte';
+import { describe, test } from 'vitest';
 import Page from '../../src/routes/album/[id]/+page.svelte';
 import type { PageData } from '../../src/routes/album/[id]/$types';
-import { render, screen } from '@testing-library/svelte';
 import { randomPhoto } from '../helpers';
 import { captionPattern } from './helpers';
-import { describe, test } from 'vitest';
 
-describe.concurrent('Albums page', () => {
+describe('Albums page', () => {
 	const arrange = (data: PageData) => {
 		return render(Page, {
 			data

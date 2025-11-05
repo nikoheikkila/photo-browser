@@ -1,5 +1,5 @@
-import type { Photo } from '$lib/domain/Photo';
 import type { Dimensions } from '$lib/domain/Dimensions';
+import type { Photo } from '$lib/domain/Photo';
 import { parseDimensions } from '../domain/Dimensions';
 
 export class PhotoCalculator {
@@ -23,7 +23,7 @@ export class PhotoCalculator {
 
 	private parseSizeFromURL(url: URL, fallback: Dimensions): Dimensions {
 		const dimension = url.pathname.match(this.dimensionPattern)?.at(1);
-		const result = Number.parseInt(dimension || '');
+		const result = Number.parseInt(dimension || '', 10);
 
 		if (Number.isNaN(result) || result < 1) {
 			return parseDimensions(fallback);

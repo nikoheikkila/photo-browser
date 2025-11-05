@@ -1,10 +1,12 @@
 import type { Interceptor, Scope } from 'nock';
 import nock from 'nock';
-import { describe, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 import { APIGateway } from '$lib/adapters/Gateway';
 import { randomPayload } from '../helpers';
 
-describe.concurrent('API Gateway', () => {
+nock.disableNetConnect();
+
+describe('API Gateway', () => {
 	const baseURL = 'https://api.org';
 
 	let scope: Scope;
@@ -13,6 +15,10 @@ describe.concurrent('API Gateway', () => {
 	beforeEach(() => {
 		scope = nock(baseURL);
 		gateway = new APIGateway(baseURL);
+	});
+
+	afterEach(() => {
+		nock.cleanAll();
 	});
 
 	describe('validating the base URL', () => {

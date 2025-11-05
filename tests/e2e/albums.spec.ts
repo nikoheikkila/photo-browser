@@ -7,13 +7,13 @@ test.describe('Albums page', () => {
 	});
 
 	test('has an accessible title', async ({ page }) => {
-		await expect(page).toHaveTitle(/Photos for album \d+/);
+		await expect(page).toHaveTitle(/Photo Browser \| Photos for album \d+/);
 	});
 
 	test('lists a number of photos', async ({ page }) => {
 		const numberOfPhotos = await page.getByRole('img').count();
 
-		await expect(numberOfPhotos).toBeGreaterThan(0);
+		expect(numberOfPhotos).toBeGreaterThan(0);
 	});
 
 	test('warns on invalid album ID', async ({ page }) => {

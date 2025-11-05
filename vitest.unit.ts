@@ -1,6 +1,6 @@
-import { defineConfig } from 'vitest/config';
-import { sveltekit } from '@sveltejs/kit/vite';
 import { cpus } from 'node:os';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vitest/config';
 
 const isPipeline = !!process.env.CI;
 
@@ -13,9 +13,7 @@ export default defineConfig({
 		globals: true,
 		environment: 'node',
 		maxConcurrency: cpus().length,
-		cache: {
-			dir: '/tmp/.vitest-cache'
-		},
+		cacheDir: '/tmp/.vitest-cache',
 		typecheck: {
 			checker: 'tsc'
 		},
@@ -24,7 +22,7 @@ export default defineConfig({
 		},
 		coverage: {
 			enabled: true,
-			provider: 'c8',
+			provider: 'v8',
 			reporter: ['text', 'html']
 		}
 	}

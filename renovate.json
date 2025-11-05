@@ -1,0 +1,54 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"extends": ["config:recommended"],
+	"packageRules": [
+		{
+			"description": "Group SvelteKit ecosystem updates",
+			"matchPackagePatterns": ["^@sveltejs/"],
+			"groupName": "SvelteKit"
+		},
+		{
+			"description": "Group Vitest ecosystem updates",
+			"matchPackagePatterns": ["^vitest", "^@vitest/"],
+			"groupName": "Vitest"
+		},
+		{
+			"description": "Group Testing Library updates",
+			"matchPackagePatterns": ["^@testing-library/"],
+			"groupName": "Testing Library"
+		},
+		{
+			"description": "Group Biome updates",
+			"matchPackagePatterns": ["^@biomejs/"],
+			"groupName": "Biome"
+		},
+		{
+			"description": "Auto-merge patch updates for dev dependencies",
+			"matchUpdateTypes": ["patch"],
+			"matchDepTypes": ["devDependencies"],
+			"automerge": true
+		},
+		{
+			"description": "Separate major updates",
+			"matchUpdateTypes": ["major"],
+			"groupName": "Major dependency updates",
+			"schedule": ["before 3am on Monday"]
+		}
+	],
+	"schedule": ["before 3am on Monday"],
+	"timezone": "Europe/Helsinki",
+	"rangeStrategy": "bump",
+	"semanticCommits": "enabled",
+	"labels": ["dependencies"],
+	"enabledManagers": ["npm"],
+	"npm": {
+		"enabled": true,
+		"lockFileMaintenance": {
+			"enabled": true,
+			"schedule": ["before 3am on Monday"]
+		}
+	},
+	"prConcurrentLimit": 5,
+	"prHourlyLimit": 2,
+	"stabilityDays": 3
+}

@@ -9,6 +9,13 @@ export const groupByKey =
 const reducer =
 	<T>(key: Getter<T>) =>
 	(groups: Record<Key, T[]>, item: T) => {
-		(groups[key(item)] ||= []).push(item);
+		const groupKey = key(item);
+
+		if (!groups[groupKey]) {
+			groups[groupKey] = [];
+		}
+
+		groups[groupKey].push(item);
+
 		return groups;
 	};

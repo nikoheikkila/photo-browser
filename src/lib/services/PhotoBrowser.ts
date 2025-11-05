@@ -1,7 +1,7 @@
 import type { PhotoGateway } from '../adapters/Gateway';
+import { groupByKey } from '../domain/Group';
 import type { Photo } from '../domain/Photo';
 import { createPhoto } from '../domain/Photo';
-import { groupByKey } from '../domain/Group';
 
 export type Albums = Dictionary<number, Photo[]>;
 

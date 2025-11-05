@@ -6,6 +6,7 @@ dotenv:
 tasks:
   install:
     desc: Install project dependencies
+    aliases: [i]
     silent: true
     run: once
     sources:
@@ -26,6 +27,7 @@ tasks:
 
   format:
     desc: Format the codebase
+    aliases: [fmt]
     deps: [install]
     sources:
       - src/**/*.svelte
@@ -34,8 +36,7 @@ tasks:
       - tests/**/*.ts
       - ./**/*.md
     cmds:
-      - npx prettier --plugin-search-dir . --write .
-      - npx eslint --fix .
+      - npx @biomejs/biome check --write .
 
   lint:
     desc: Lint the codebase
@@ -47,8 +48,7 @@ tasks:
       - tests/**/*.ts
       - ./**/*.md
     cmds:
-      - npx prettier --plugin-search-dir . --check .
-      - npx eslint .
+      - npx @biomejs/biome check .
       - npx svelte-kit sync
       - npx svelte-check --tsconfig ./tsconfig.json
 
@@ -82,6 +82,7 @@ tasks:
 
   test:unit:
     desc: Run unit tests
+    aliases: [unit]
     deps: [install]
     sources:
       - vitest.unit.ts
@@ -93,6 +94,7 @@ tasks:
       NODE_ENV: test
 
   test:unit:watch:
+    aliases: [watch]
     desc: Run unit tests in watch mode
     cmds:
       - npx vitest watch --config vitest.unit.ts --no-coverage
@@ -101,6 +103,7 @@ tasks:
 
   test:components:
     desc: Run component tests
+    aliases: [component]
     deps: [install]
     sources:
       - vitest.components.ts
@@ -121,6 +124,7 @@ tasks:
   test:e2e:
     desc: Run end-to-end tests
     deps: [playwright, build]
+    aliases: [e2e]
     sources:
       - src/**/*.svelte
       - src/**/*.html

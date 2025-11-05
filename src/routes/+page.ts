@@ -1,10 +1,10 @@
 import type { HttpError } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
+import { HttpStatusCode } from 'axios';
 import { handleError } from '$lib/adapters/Errors';
+import { browser } from '$lib/services';
 import type { Albums } from '$lib/services/PhotoBrowser';
 import type { PageLoad } from './$types';
-import { browser } from '$lib/services';
-import { HttpStatusCode } from 'axios';
 
 type Response = {
 	albums: Albums;

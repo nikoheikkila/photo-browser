@@ -1,15 +1,15 @@
-import { PhotoCalculator } from '$lib/services/PhotoCalculator';
 import { faker } from '@faker-js/faker';
-import type { Photo } from '$lib/domain/Photo';
+import { describe, expect, test } from 'vitest';
 import type { Dimensions } from '$lib/domain/Dimensions';
+import type { Photo } from '$lib/domain/Photo';
+import { PhotoCalculator } from '$lib/services/PhotoCalculator';
 import { randomPhoto } from '../helpers';
-import { describe, test } from 'vitest';
 
-describe.concurrent('Photo Calculator', () => {
+describe('Photo Calculator', () => {
 	test('returns the width and height of a photo', () => {
-		const full = faker.datatype.number({ min: 1 });
-		const thumbnail = faker.datatype.number({ min: 1 });
-		const nonce = faker.datatype.string();
+		const full = 600;
+		const thumbnail = 150;
+		const nonce = faker.string.alpha();
 
 		const photo = randomPhoto({
 			url: randomURL(full, nonce),
@@ -21,7 +21,7 @@ describe.concurrent('Photo Calculator', () => {
 	});
 
 	test('returns default width and height for photo with invalid URL', () => {
-		const nonce = faker.datatype.string();
+		const nonce = faker.string.alpha();
 
 		const photo = randomPhoto({
 			url: new URL(`https://via.placeholder.com/${nonce}`),
@@ -34,7 +34,7 @@ describe.concurrent('Photo Calculator', () => {
 
 	test('returns default width and height for URl with zero dimension', () => {
 		const size = 0;
-		const nonce = faker.datatype.string();
+		const nonce = faker.string.alpha();
 
 		const photo = randomPhoto({
 			url: randomURL(size, nonce),

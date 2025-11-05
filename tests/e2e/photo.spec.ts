@@ -7,7 +7,7 @@ test.describe('Single photo page', () => {
 	});
 
 	test('has an accessible title', async ({ page }) => {
-		await expect(page).toHaveTitle(/Photo - \w+/);
+		await expect(page).toHaveTitle(/Photo Browser \| Photo - .+/);
 	});
 
 	test('lists a single photos', async ({ page }) => {
