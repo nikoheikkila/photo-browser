@@ -29,19 +29,17 @@ task test
 # Individual test suites
 task test:unit              # Unit tests with Vitest (Node environment)
 task test:unit:watch        # Unit tests in watch mode (no coverage)
-task test:components        # Component tests with Vitest (happy-dom)
-task test:components:watch  # Component tests in watch mode
+task test:mutation          # Mutation tests with Stryker
 task test:e2e               # E2E tests with Playwright (requires build first)
 
 # Run specific test files
-npx vitest run --config vitest.unit.ts tests/unit/PhotoBrowser.test.ts
-npx vitest run --config vitest.components.ts tests/components/listing.test.ts
+npx vitest run tests/unit/PhotoBrowser.test.ts
 npx playwright test tests/e2e/listing.spec.ts
 ```
 
 **Important**: Unit and component tests use **different Vitest configs**:
-- `vitest.unit.ts` - Node environment, includes `tests/unit/*.test.ts`
-- `vitest.components.ts` - happy-dom environment, includes `tests/components/*.test.ts`, uses setup file
+- `vitest.config.unit.ts` - Node environment, includes `tests/unit/*.test.ts`
+- `vitest.config.components.ts` - happy-dom environment, includes `tests/components/*.test.ts`, uses setup file
 
 E2E tests run against a production build and will automatically start a preview server.
 
@@ -202,13 +200,13 @@ Routes/Components (UI Layer)
 
 ```fish
 # Single test file
-npx vitest run --config vitest.unit.ts tests/unit/PhotoBrowser.test.ts
+npx vitest run --config vitest.config.unit.ts tests/unit/PhotoBrowser.test.ts
 
 # Single test suite by name
-npx vitest run --config vitest.unit.ts -t "loading all photos"
+npx vitest run --config vitest.config.unit.ts -t "loading all photos"
 
 # Watch mode for specific file
-npx vitest watch --config vitest.components.ts tests/components/listing.test.ts
+npx vitest watch --config vitest.config.components.ts tests/components/listing.test.ts
 
 # Single E2E test
 npx playwright test tests/e2e/listing.spec.ts
@@ -239,8 +237,8 @@ Defined in `svelte.config.js`:
 
 - `svelte.config.js` - SvelteKit config with Netlify adapter, path aliases
 - `vite.config.js` - Vite config (minimal, just SvelteKit plugin)
-- `vitest.unit.ts` - Unit test config (Node env, coverage enabled)
-- `vitest.components.ts` - Component test config (happy-dom, setup file)
+- `vitest.config.unit.ts` - Unit test config (Node env, coverage enabled)
+- `vitest.config.components.ts` - Component test config (happy-dom, setup file)
 - `playwright.config.ts` - E2E config (port 5173, auto-start preview server)
 - `Taskfile.yaml` - All development commands with dependency management
 
@@ -255,8 +253,8 @@ Configured for **Netlify** with `@sveltejs/adapter-netlify`:
 
 | Config | Environment | Test Files | Coverage | Setup |
 |--------|-------------|------------|----------|-------|
-| `vitest.unit.ts` | Node | `tests/unit/*.test.ts` | Enabled (c8) | None |
-| `vitest.components.ts` | happy-dom | `tests/components/*.test.ts` | Disabled | `tests/components/setup.ts` |
+| `vitest.config.unit.ts` | Node | `tests/unit/*.test.ts` | Enabled (c8) | None |
+| `vitest.config.components.ts` | happy-dom | `tests/components/*.test.ts` | Disabled | `tests/components/setup.ts` |
 | `playwright.config.ts` | Real browser | `tests/e2e/*.spec.ts` | N/A | Webserver auto-start |
 
 ## Code Patterns to Follow

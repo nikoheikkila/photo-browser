@@ -4,7 +4,6 @@ import { parseDimensions } from '../domain/Dimensions';
 
 export class PhotoCalculator {
 	private readonly photo: Photo;
-	private readonly dimensionPattern: RegExp = /^\/(\d+)\/(.+)$/;
 	private readonly defaultFullSize: Dimensions = { width: 600, height: 600 };
 
 	private readonly defaultThumbnailSize: Dimensions = { width: 150, height: 150 };
@@ -22,16 +21,16 @@ export class PhotoCalculator {
 	}
 
 	private parseSizeFromURL(url: URL, fallback: Dimensions): Dimensions {
-		const dimension = url.pathname.match(this.dimensionPattern)?.at(1);
-		const result = Number.parseInt(dimension || '', 10);
+		const pathSegments = url.pathname.split('/').filter(Boolean).at(0);
+		const result = Number(pathSegments);
 
-		if (Number.isNaN(result) || result < 1) {
+		try {
+			return parseDimensions({
+				width: result,
+				height: result
+			});
+		} catch {
 			return parseDimensions(fallback);
 		}
-
-		return parseDimensions({
-			width: result,
-			height: result
-		});
 	}
 }

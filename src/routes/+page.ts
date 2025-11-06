@@ -1,7 +1,7 @@
 import type { HttpError } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import { HttpStatusCode } from 'axios';
-import { handleError } from '$lib/adapters/Errors';
+import { formatError } from '$lib/adapters/Errors';
 import { browser } from '$lib/services';
 import type { Albums } from '$lib/services/PhotoBrowser';
 import type { PageLoad } from './$types';
@@ -15,8 +15,8 @@ export const load: PageLoad<Response> = async () => {
 		return {
 			albums: await browser.withLimit(500).groupPhotosByAlbum()
 		};
-	} catch (err: unknown) {
-		handleError(err);
+	} catch (error: unknown) {
+		console.error(formatError(error));
 		throw errorWhileLoadingPhotos();
 	}
 };

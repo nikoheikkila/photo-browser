@@ -1,7 +1,7 @@
 import type { HttpError } from '@sveltejs/kit';
 import { error } from '@sveltejs/kit';
 import { HttpStatusCode } from 'axios';
-import { handleError } from '$lib/adapters/Errors';
+import { formatError } from '$lib/adapters/Errors';
 import type { Photo } from '$lib/domain/Photo';
 import { browser } from '$lib/services';
 import type { PageLoad } from './$types';
@@ -24,7 +24,7 @@ export const load: PageLoad<Response> = async ({ params }) => {
 			photos: await browser.withLimit(50).loadFromAlbum(albumId)
 		};
 	} catch (error: unknown) {
-		handleError(error);
+		console.error(formatError(error));
 		throw notFoundAlbum(albumId);
 	}
 };

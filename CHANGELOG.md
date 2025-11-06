@@ -54,8 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Configuration Updates**
 - Fixed `svelte.config.js`: Updated `vitePreprocess` import from `@sveltejs/kit/vite` to `@sveltejs/vite-plugin-svelte`
 - Fixed `vite.config.js`: Moved `fs.allow` configuration into `server.fs.allow` (Vite v7 requirement)
-- Updated `vitest.unit.ts` and `vitest.components.ts`: Changed coverage provider from 'c8' to 'v8'
-- Updated `vitest.unit.ts` and `vitest.components.ts`: Changed deprecated `cache.dir` to `cacheDir` (Vitest v4 requirement)
+- Updated `vitest.config.unit.ts` and `vitest.config.components.ts`: Changed coverage provider from 'c8' to 'v8'
+- Updated `vitest.config.unit.ts` and `vitest.config.components.ts`: Changed deprecated `cache.dir` to `cacheDir` (Vitest v4 requirement)
 - Fixed `app.html`: Removed hardcoded `<title>` tag to allow page-specific titles from `<svelte:head>`
 
 **Test Fixes**

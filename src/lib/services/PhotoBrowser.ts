@@ -27,18 +27,10 @@ export default class PhotoBrowser {
 	}
 
 	public async loadPhoto(id: number): Promise<Photo> {
-		if (id < 1) {
-			throw new Error('Photo ID must be greater than zero');
-		}
-
 		return this.gateway.fetchPhoto(id).then(createPhoto);
 	}
 
 	public async loadFromAlbum(albumId: number): Promise<Photo[]> {
-		if (albumId < 1) {
-			throw new Error('Album ID must be greater than zero');
-		}
-
 		return this.gateway
 			.fetchPhotosByAlbumId(albumId, { _limit: this.limit })
 			.then((response) => response.map(createPhoto));

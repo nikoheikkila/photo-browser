@@ -37,6 +37,14 @@ describe('API Gateway', () => {
 		test('throws error with invalid URL', () => {
 			expect(() => new APIGateway('abc')).toThrowError(/Invalid base URL 'abc' given/);
 		});
+
+		test('throws error message containing exact original input', () => {
+			const invalidURL = 'not-a-valid-url';
+
+			expect(() => new APIGateway(invalidURL)).toThrowError(
+				`Invalid base URL '${invalidURL}' given`
+			);
+		});
 	});
 
 	describe('HTTP GET', () => {
@@ -68,6 +76,39 @@ describe('API Gateway', () => {
 				route.reply(500, 'Connection timeout');
 
 				await expect(gateway.fetchPhotos()).rejects.toThrowError('HTTP 500: Connection timeout');
+			});
+
+			test('passes params object correctly', async () => {
+				const params = { _limit: 25 };
+				route.query(params).reply(200, [randomPayload()]);
+
+				const photos = await gateway.fetchPhotos(params);
+
+				expect(photos).toMatchObject([
+					{
+						albumId: expect.any(Number),
+						id: expect.any(Number),
+						title: expect.any(String),
+						url: expect.any(String),
+						thumbnailUrl: expect.any(String)
+					}
+				]);
+			});
+
+			test('works without params object', async () => {
+				route.reply(200, [randomPayload()]);
+
+				const photos = await gateway.fetchPhotos();
+
+				expect(photos).toMatchObject([
+					{
+						albumId: expect.any(Number),
+						id: expect.any(Number),
+						title: expect.any(String),
+						url: expect.any(String),
+						thumbnailUrl: expect.any(String)
+					}
+				]);
 			});
 		});
 

@@ -54,8 +54,12 @@ export class APIGateway implements PhotoGateway {
 	}
 
 	private validateBaseURL(baseURL: string | undefined): string {
+		if (!baseURL) {
+			throw new Error(`Invalid base URL '${baseURL}' given`);
+		}
+
 		try {
-			return new URL(baseURL || '').href;
+			return new URL(baseURL).href;
 		} catch {
 			throw new Error(`Invalid base URL '${baseURL}' given`);
 		}

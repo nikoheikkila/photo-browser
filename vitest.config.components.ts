@@ -7,23 +7,19 @@ const isPipeline = !!process.env.CI;
 export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
-		include: ['tests/unit/*.test.ts'],
+		name: 'Component Tests',
+		include: ['tests/components/**/*.test.ts'],
+		setupFiles: ['tests/components/setup.ts'],
 		reporters: ['verbose'],
 		allowOnly: !isPipeline,
 		globals: true,
-		environment: 'node',
+		environment: 'jsdom',
 		maxConcurrency: cpus().length,
-		cacheDir: '/tmp/.vitest-cache',
 		typecheck: {
 			checker: 'tsc'
 		},
 		sequence: {
 			shuffle: true
-		},
-		coverage: {
-			enabled: true,
-			provider: 'v8',
-			reporter: ['text', 'html']
 		}
 	}
 });

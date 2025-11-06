@@ -54,7 +54,7 @@ describe('Photo Browser', () => {
 		test('throws error with null server response', async () => {
 			gateway.feedWith([{}]);
 
-			await expect(() => browser.loadPhotos()).rejects.toThrowError(
+			await expect(browser.loadPhotos()).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
@@ -62,7 +62,7 @@ describe('Photo Browser', () => {
 		test('throws error with malformed server response', async () => {
 			gateway.feedWith([{ key: faker.string.alpha() }]);
 
-			await expect(() => browser.loadPhotos()).rejects.toThrowError(
+			await expect(browser.loadPhotos()).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
@@ -71,7 +71,7 @@ describe('Photo Browser', () => {
 			const expectedError = 'Could not load photos';
 			gateway.setError(new Error(expectedError));
 
-			await expect(() => browser.loadPhotos()).rejects.toThrowError(new RegExp(expectedError));
+			await expect(browser.loadPhotos()).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
 
@@ -89,9 +89,7 @@ describe('Photo Browser', () => {
 		});
 
 		test('throws error with ID less than 1', async () => {
-			await expect(() => browser.loadPhoto(0)).rejects.toThrowError(
-				'Photo ID must be greater than zero'
-			);
+			await expect(browser.loadPhoto(0)).rejects.toThrowError(/Photo ID must be greater than zero/);
 		});
 
 		test('throws error with album ID less than 1', async () => {
@@ -102,9 +100,7 @@ describe('Photo Browser', () => {
 				})
 			]);
 
-			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(
-				/Album ID must be greater than zero/
-			);
+			await expect(browser.loadPhoto(1)).rejects.toThrowError(/Album ID must be greater than zero/);
 		});
 
 		test('throws error with empty title', async () => {
@@ -115,9 +111,7 @@ describe('Photo Browser', () => {
 				})
 			]);
 
-			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(
-				/Title must be a non-empty string/
-			);
+			await expect(browser.loadPhoto(1)).rejects.toThrowError(/Title must be a non-empty string/);
 		});
 
 		test('throws error with invalid photo URL', async () => {
@@ -128,7 +122,7 @@ describe('Photo Browser', () => {
 				})
 			]);
 
-			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Photo URL must be valid/);
+			await expect(browser.loadPhoto(1)).rejects.toThrowError(/Photo URL must be valid/);
 		});
 
 		test('throws error with invalid thumbnail URL', async () => {
@@ -139,13 +133,13 @@ describe('Photo Browser', () => {
 				})
 			]);
 
-			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(/Thumbnail URL must be valid/);
+			await expect(browser.loadPhoto(1)).rejects.toThrowError(/Thumbnail URL must be valid/);
 		});
 
 		test('throws error with empty server response', async () => {
 			gateway.feedWith([{}]);
 
-			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(
+			await expect(browser.loadPhoto(1)).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
@@ -153,7 +147,7 @@ describe('Photo Browser', () => {
 		test('throws error with non-schematic server response', async () => {
 			gateway.feedWith([{ key: faker.string.alpha() }]);
 
-			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(
+			await expect(browser.loadPhoto(1)).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
@@ -162,7 +156,7 @@ describe('Photo Browser', () => {
 			const expectedError = 'Could not load photo with ID 1';
 			gateway.setError(new Error(expectedError));
 
-			await expect(() => browser.loadPhoto(1)).rejects.toThrowError(new RegExp(expectedError));
+			await expect(browser.loadPhoto(1)).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
 
@@ -186,15 +180,15 @@ describe('Photo Browser', () => {
 		});
 
 		test('throws error with ID less than 1', async () => {
-			await expect(() => browser.loadFromAlbum(0)).rejects.toThrowError(
-				'Album ID must be greater than zero'
+			await expect(browser.loadFromAlbum(0)).rejects.toThrowError(
+				/Album ID must be greater than zero/
 			);
 		});
 
 		test('throws error with empty server response', async () => {
 			gateway.feedWith([{}]);
 
-			await expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
+			await expect(browser.loadFromAlbum(1)).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
@@ -202,7 +196,7 @@ describe('Photo Browser', () => {
 		test('throws error with non-schematic server response', async () => {
 			gateway.feedWith([{ key: faker.string.alpha() }]);
 
-			await expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(
+			await expect(browser.loadFromAlbum(1)).rejects.toThrowError(
 				/Can not parse photo from invalid data/
 			);
 		});
@@ -211,7 +205,37 @@ describe('Photo Browser', () => {
 			const expectedError = 'Could not load album with ID 1';
 			gateway.setError(new Error(expectedError));
 
-			await expect(() => browser.loadFromAlbum(1)).rejects.toThrowError(new RegExp(expectedError));
+			expect(browser.loadFromAlbum(1)).rejects.toThrowError(new RegExp(expectedError));
+		});
+	});
+
+	describe('boundary value validation', () => {
+		test('throws on negative limit', () => {
+			expect(() => browser.withLimit(-1)).toThrowError('Photo limit must be greater than zero');
+		});
+
+		test('accepts limit of 1 as valid', () => {
+			expect(browser.withLimit(1)).toBe(browser);
+		});
+
+		test('throws on negative photo ID', async () => {
+			expect(browser.loadPhoto(-1)).rejects.toThrow(/Photo ID must be greater than zero/);
+		});
+
+		test('throws on negative album ID', async () => {
+			expect(browser.loadFromAlbum(-1)).rejects.toThrow(/Album ID must be greater than zero/);
+		});
+
+		test('accepts photo ID of 1 as valid', async () => {
+			const photo = await browser.loadPhoto(1);
+
+			expect(photo.id).toBe(1);
+		});
+
+		test('accepts album ID of 1 as valid', async () => {
+			const photos = await browser.loadFromAlbum(1);
+
+			expect(photos).toBeInstanceOf(Array);
 		});
 	});
 

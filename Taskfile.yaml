@@ -63,28 +63,22 @@ tasks:
     desc: Run unit tests
     aliases: [unit]
     deps: [install]
-    cmd: npx vitest run --config vitest.unit.ts
+    cmd: npx vitest run
     env:
       NODE_ENV: test
 
   test:unit:watch:
     aliases: [watch]
     desc: Run unit tests in watch mode
-    cmd: npx vitest watch --config vitest.unit.ts --no-coverage
+    cmd: npx vitest watch
     env:
       NODE_ENV: test
 
-  test:components:
-    desc: Run component tests
-    aliases: [component]
+  test:mutation:
+    desc: Run mutation tests
+    aliases: [mutate]
     deps: [install]
-    cmd: npx vitest run --config vitest.components.ts
-    env:
-      NODE_ENV: test
-
-  test:components:watch:
-    desc: Run component tests in watch mode
-    cmd: npx vitest watch --config vitest.components.ts
+    cmd: npx stryker run
     env:
       NODE_ENV: test
 
@@ -101,7 +95,7 @@ tasks:
     cmds:
       - task: lint
       - task: test:unit
-      - task: test:components
+      - task: test:mutation
       - task: test:e2e
 
   playwright:
