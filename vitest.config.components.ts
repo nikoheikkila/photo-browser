@@ -1,5 +1,5 @@
-import { cpus } from 'node:os';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
 
 const isPipeline = !!process.env.CI;
@@ -7,14 +7,19 @@ const isPipeline = !!process.env.CI;
 export default defineConfig({
 	plugins: [sveltekit()],
 	test: {
-		name: 'Component Tests',
+		browser: {
+			enabled: true,
+			headless: true,
+			provider: playwright(),
+			instances: [
+				{ browser: 'chromium', name: 'Component Tests (Chromium)' },
+				{ browser: 'firefox', name: 'Component Tests (Firefox)' },
+				{ browser: 'webkit', name: 'Component Tests (WebKit)' }
+			]
+		},
 		include: ['tests/components/**/*.test.ts'],
-		setupFiles: ['tests/components/setup.ts'],
 		reporters: ['verbose'],
 		allowOnly: !isPipeline,
-		globals: true,
-		environment: 'jsdom',
-		maxConcurrency: cpus().length,
 		typecheck: {
 			checker: 'tsc'
 		},

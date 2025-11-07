@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/svelte';
-import { describe, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
+import { render } from 'vitest-browser-svelte';
 import Page from '../../src/routes/album/[id]/+page.svelte';
 import type { PageData } from '../../src/routes/album/[id]/$types';
 import { randomPhoto } from '../helpers';
@@ -13,94 +13,90 @@ describe('Albums page', () => {
 	};
 
 	test('warns user on empty photo sets', async () => {
-		arrange({
+		const { getByRole } = arrange({
 			albumId: 1,
 			photos: []
 		});
 
-		const warning = await screen.findByRole('alert');
-		const heading = await screen.findByRole('heading');
-
-		expect(heading).toHaveTextContent(/you stumbled upon an empty album/i);
-		expect(warning).toHaveTextContent(/don't worry there will be photos here in the future/i);
+		await expect
+			.element(getByRole('heading'))
+			.toHaveTextContent(/you stumbled upon an empty album/i);
+		await expect
+			.element(getByRole('alert'))
+			.toHaveTextContent(/don't worry there will be photos here in the future/i);
 	});
 
 	test('shows photos belonging to a single album', async () => {
 		const albumId = 3;
 		const photos = [randomPhoto({ albumId }), randomPhoto({ albumId })];
-		arrange({
+		const { getByRole } = arrange({
 			albumId,
 			photos
 		});
 
-		const title = await screen.findByRole('heading', { name: `Photos from album ${albumId}` });
-		const allPhotos = await screen.findAllByRole('img');
-
-		expect(title).toBeVisible();
-		expect(allPhotos).toHaveLength(photos.length);
+		await expect
+			.element(getByRole('heading', { name: `Photos from album ${albumId}` }))
+			.toBeVisible();
+		await expect.element(getByRole('img')).toHaveLength(photos.length);
 	});
 
 	test('lists photos with accessible screen reader texts', async () => {
 		const albumId = 3;
 		const photos = [randomPhoto({ albumId }), randomPhoto({ albumId })];
-		arrange({
+		const { getByAltText } = arrange({
 			albumId,
 			photos
 		});
 
-		const accessiblePhotos = await screen.findAllByAltText(captionPattern);
-
-		expect(accessiblePhotos).toHaveLength(photos.length);
+		await expect.element(getByAltText(captionPattern)).toHaveLength(photos.length);
 	});
 
 	test('photos in album link to a single photo page', async () => {
 		const id = 1;
 		const albumId = 3;
-		arrange({
+		const { getByRole } = arrange({
 			albumId,
 			photos: [randomPhoto({ id, albumId })]
 		});
 
-		const link = await screen.findByRole('link', { name: captionPattern });
-
-		expect(link).toHaveAttribute('href', `/photo/${id}`);
+		await expect
+			.element(getByRole('link', { name: captionPattern }))
+			.toHaveAttribute('href', `/photo/${id}`);
 	});
 
 	test('allows navigating to next album page', async () => {
 		const albumId = 3;
-		arrange({
+		const { getByRole } = arrange({
 			albumId,
 			photos: [randomPhoto({ albumId })]
 		});
 
-		const nextAlbumLink = await screen.findByRole('link', { name: /next album/i });
+		const nextAlbumLink = getByRole('link', { name: /next album/i });
 
-		expect(nextAlbumLink).toBeVisible();
-		expect(nextAlbumLink).toHaveAttribute('href', `/album/${albumId + 1}`);
+		await expect.element(nextAlbumLink).toBeVisible();
+		await expect.element(nextAlbumLink).toHaveAttribute('href', `/album/${albumId + 1}`);
 	});
 
 	test('allows navigating to previous album page', async () => {
 		const albumId = 3;
-		arrange({
+		const { getByRole } = arrange({
 			albumId,
 			photos: [randomPhoto({ albumId })]
 		});
 
-		const previousAlbumLink = await screen.findByRole('link', { name: /previous album/i });
+		const previousAlbumLink = getByRole('link', { name: /previous album/i });
 
-		expect(previousAlbumLink).toBeVisible();
-		expect(previousAlbumLink).toHaveAttribute('href', `/album/${albumId - 1}`);
+		await expect.element(previousAlbumLink).toBeVisible();
+		await expect.element(previousAlbumLink).toHaveAttribute('href', `/album/${albumId - 1}`);
 	});
 
-	test('does not allow navigating to previous album from the first album', () => {
+	test('does not allow navigating to previous album from the first album', async () => {
 		const albumId = 1;
-		arrange({
+		const { getByRole } = arrange({
 			albumId,
 			photos: [randomPhoto({ albumId })]
 		});
 
-		const previousAlbumLink = screen.queryByRole('link', { name: /previous album/i });
-
-		expect(previousAlbumLink).not.toBeInTheDocument();
+		await expect.element(getByRole('link', { name: /previous album/i })).not.toBeInTheDocument();
 	});
 });

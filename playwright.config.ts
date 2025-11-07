@@ -21,7 +21,21 @@ const config: PlaywrightTestConfig = {
 		command: `npx vite preview --port ${webServerPort}`,
 		url: baseURL,
 		reuseExistingServer: true
-	}
+	},
+	projects: [
+		{
+			name: 'Chromium',
+			use: { browserName: 'chromium' }
+		},
+		{
+			name: 'Firefox',
+			use: { browserName: 'firefox' }
+		},
+		{
+			name: 'Webkit',
+			use: { browserName: 'webkit' }
+		}
+	]
 };
 
 export default config;

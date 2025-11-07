@@ -205,7 +205,7 @@ describe('Photo Browser', () => {
 			const expectedError = 'Could not load album with ID 1';
 			gateway.setError(new Error(expectedError));
 
-			expect(browser.loadFromAlbum(1)).rejects.toThrowError(new RegExp(expectedError));
+			await expect(browser.loadFromAlbum(1)).rejects.toThrowError(new RegExp(expectedError));
 		});
 	});
 
@@ -219,11 +219,11 @@ describe('Photo Browser', () => {
 		});
 
 		test('throws on negative photo ID', async () => {
-			expect(browser.loadPhoto(-1)).rejects.toThrow(/Photo ID must be greater than zero/);
+			await expect(browser.loadPhoto(-1)).rejects.toThrow(/Photo ID must be greater than zero/);
 		});
 
 		test('throws on negative album ID', async () => {
-			expect(browser.loadFromAlbum(-1)).rejects.toThrow(/Album ID must be greater than zero/);
+			await expect(browser.loadFromAlbum(-1)).rejects.toThrow(/Album ID must be greater than zero/);
 		});
 
 		test('accepts photo ID of 1 as valid', async () => {

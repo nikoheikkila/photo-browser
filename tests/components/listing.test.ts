@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/svelte';
-import { describe, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
+import { render } from 'vitest-browser-svelte';
 import Page from '../../src/routes/+page.svelte';
 import type { PageData } from '../../src/routes/$types';
 import { randomPhoto } from '../helpers';
@@ -13,43 +13,36 @@ describe('Listing Page', () => {
 	};
 
 	test('displays a warning with empty album set', async () => {
-		arrange({
+		const { getByRole } = arrange({
 			albums: {}
 		});
 
-		const warning = await screen.findByRole('alert');
-		const heading = await screen.findByRole('heading');
-
-		expect(heading).toHaveTextContent(/no photos in the gallery/i);
-		expect(warning).toHaveTextContent(/please, check back later/i);
+		await expect.element(getByRole('heading')).toHaveTextContent(/no photos in the gallery/i);
+		await expect.element(getByRole('alert')).toHaveTextContent(/please, check back later/i);
 	});
 
 	test('displays the singular number of photos per album', async () => {
-		arrange({
+		const { getByText } = arrange({
 			albums: {
 				1: [randomPhoto()]
 			}
 		});
 
-		const paragraph = await screen.findByText(/1 photo in the album/i);
-
-		expect(paragraph).toBeVisible();
+		await expect.element(getByText(/1 photo in the album/i)).toBeVisible();
 	});
 
 	test('displays the plural number of photos per album', async () => {
-		arrange({
+		const { getByText } = arrange({
 			albums: {
 				1: [randomPhoto(), randomPhoto()]
 			}
 		});
 
-		const paragraph = await screen.findByText(/2 photos in the album/i);
-
-		expect(paragraph).toBeVisible();
+		await expect.element(getByText(/2 photos in the album/i)).toBeVisible();
 	});
 
 	test('lists all the photos with accessible screen reader texts', async () => {
-		arrange({
+		const { getByAltText } = arrange({
 			albums: {
 				1: [randomPhoto()],
 				2: [randomPhoto(), randomPhoto()],
@@ -57,21 +50,19 @@ describe('Listing Page', () => {
 			}
 		});
 
-		const accessiblePhotos = await screen.findAllByAltText(captionPattern);
-
-		expect(accessiblePhotos).toHaveLength(6);
+		await expect.element(getByAltText(captionPattern)).toHaveLength(6);
 	});
 
 	test('photos in page link to a single photo page', async () => {
 		const id = 1;
-		arrange({
+		const { getByRole } = arrange({
 			albums: {
 				1: [randomPhoto({ id })]
 			}
 		});
 
-		const link = await screen.findByRole('link', { name: captionPattern });
-
-		expect(link).toHaveAttribute('href', `/photo/${id}`);
+		await expect
+			.element(getByRole('link', { name: captionPattern }))
+			.toHaveAttribute('href', `/photo/${id}`);
 	});
 });
