@@ -62,7 +62,7 @@ tasks:
   test:unit:
     desc: Run unit tests
     aliases: [unit]
-    deps: [install]
+    deps: [install, playwright]
     cmd: npx vitest run
     env:
       NODE_ENV: test
@@ -99,7 +99,6 @@ tasks:
       - task: test:e2e
 
   playwright:
-    deps: [install]
-    silent: true
     internal: true
+    run: once
     cmd: npx playwright install --with-deps
